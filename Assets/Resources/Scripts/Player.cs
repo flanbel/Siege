@@ -10,8 +10,23 @@ public class Player : NetworkBehaviour
     NetworkIdentity Identity;
     [SerializeField]
     float AddGavity = 0.0f;
-	// Use this for initialization
-	void Start () {
+    [SerializeField]
+    float speed = 3;
+
+    //ローカルで生成されたなら実行
+    public override void OnStartLocalPlayer()
+    {
+        //ローカルなカメラ生成
+        GameObject camera = Instantiate(Resources.Load("Prefabs/GameCamera")) as GameObject;
+        camera.name = "GameCamera";
+        camera.transform.localPosition = new Vector3(0, 1, -10);
+
+        //カメラを子に登録
+        camera.transform.SetParent(this.transform);
+    }
+
+    // Use this for initialization
+    void Start () {
         //キャラクターコントローラーのコンポーネントを取得
         Characon = this.GetComponent<CharacterController>();
         //コンポーネント取得
@@ -23,22 +38,25 @@ public class Player : NetworkBehaviour
         //ローカルなオブジェクト(ローカル側で生成された)なら
         if (Identity.isLocalPlayer)
         {
+            //WASD機能
             if (Input.GetKey(KeyCode.W))
             {
-                Characon.Move(this.transform.TransformDirection(Vector3.forward));
+                Characon.Move(this.transform.TransformDirection(Vector3.forward) * Time.deltaTime * speed);
             }
             if (Input.GetKey(KeyCode.S))
             {
-                Characon.Move(this.transform.TransformDirection(Vector3.back));
+                Characon.Move(this.transform.TransformDirection(Vector3.back) * Time.deltaTime * speed);
             }
             if (Input.GetKey(KeyCode.A))
             {
-                Characon.Move(this.transform.TransformDirection(Vector3.left));
+                Characon.Move(this.transform.TransformDirection(Vector3.left) * Time.deltaTime * speed);
             }
             if (Input.GetKey(KeyCode.D))
             {
-                Characon.Move(this.transform.TransformDirection(Vector3.right));
+                Characon.Move(this.transform.TransformDirection(Vector3.right) * Time.deltaTime * speed);
             }
+            //マウスで回転
+            transform.localEulerAngles += new Vector3(0.0f, Input.GetAxis("Mouse X"));
 
             //地面についていないなら
             if (!Characon.isGrounded)
