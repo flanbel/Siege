@@ -24,10 +24,10 @@ public class Player : NetworkBehaviour
         //ローカルなカメラ生成
         GameObject camera = Instantiate(Resources.Load("Prefabs/GameCamera")) as GameObject;
         camera.name = "GameCamera";
-        camera.transform.localPosition = new Vector3(0, 1, -10);
-
         //カメラを子に登録
         camera.transform.SetParent(this.transform);
+
+        camera.transform.localPosition = new Vector3(0, 1, -10);
     }
 
     // Use this for initialization
@@ -45,8 +45,10 @@ public class Player : NetworkBehaviour
         //ローカルなオブジェクト(ローカル側で生成された)なら
         if (Identity.isLocalPlayer)
         {
-            if (Input.GetKeyDown(KeyCode.L))
+            //アニメーションがある　かつ　Lキー
+            if (Ani && Input.GetKeyDown(KeyCode.L))
             {
+                //アニメーションのトリガー設定
                 Ani.SetTrigger("WalkTrigger");
             }
 
