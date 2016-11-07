@@ -9,7 +9,7 @@ public class MultiMessage : MonoBehaviour {
     public Vector2 space;
     RectTransform rect;
     //発信者
-    GameObject Sender;
+    //GameObject Sender;
 
 	// Use this for initialization
 	void Start () {

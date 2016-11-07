@@ -12,7 +12,7 @@ public class Player_SyncPosition : NetworkBehaviour
 
     //Playerの現在位置
     [SerializeField]
-    Transform myTransform;
+    Transform myTransform = null;
     //Lerp: ２ベクトル間を補間する
     [SerializeField]
     float lerpRate = 15;

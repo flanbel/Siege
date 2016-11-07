@@ -13,7 +13,7 @@ public class MultiChat : MonoBehaviour {
     GameObject inputField = null;
     InputField field;
     //サーバーに発信する用のテキストかな
-    GameObject MultiText;
+    //GameObject MultiText;
 
     // Use this for initialization
     void Start () {

@@ -14,7 +14,7 @@ public class Player_SyncRotation : NetworkBehaviour
     //private Quaternion syncCamRotation;
 
     [SerializeField]
-    private Transform playerTransform;
+    private Transform playerTransform = null;
     //[SerializeField]
     //private Transform camTransform;
     [SerializeField]
