@@ -6,9 +6,9 @@ using UnityEngine.Networking;
 [RequireComponent(typeof(AudioSource))]
 
 /// <summary>
-/// すべての武器の基底クラス。
+/// 武器の基底クラス。
 /// </summary>
-public abstract class WeaponBase : MonoBehaviour
+public abstract class WeaponBase : Fit
 {
     //武器のステートマシン
     public enum WEAPONSTATE

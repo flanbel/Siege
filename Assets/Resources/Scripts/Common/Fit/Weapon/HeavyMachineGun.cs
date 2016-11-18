@@ -14,6 +14,7 @@ public class HeavyMachineGun : Gun
     public float FireRoll = 0.0f;
     //発射数が増える区切り
     public float IncreaseRoll = 0;
+    Transform t;
 
     // Use this for initialization
     new void Start()
@@ -57,13 +58,19 @@ public class HeavyMachineGun : Gun
             for (int i = 0; i < num + 1; i++)
             {
                 //発射
-                GunInfo.NowMagazine--;
+                if(0 >= GunInfo.NowMagazine--)
+                {
+                    break;
+                }
                 //弾生成
                 GameObject bullet = Instantiate(GunInfo.UsedBulletObj);
                 //移動
                 bullet.transform.localPosition = GunInfo.Muzzle.position;
                 //設定
-                bullet.GetComponent<BulletBase>().SetState(Power, transform.TransformDirection(Vector3.forward));
+                Vector3 dir = transform.TransformDirection(Vector3.forward);
+                dir.x += Random.Range(-GunInfo.Spread.x, GunInfo.Spread.x);
+                dir.y += Random.Range(-GunInfo.Spread.y, GunInfo.Spread.y);
+                bullet.GetComponent<BulletBase>().SetState(Power, dir);
             }
         }
     }

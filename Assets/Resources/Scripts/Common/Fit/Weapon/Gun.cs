@@ -21,12 +21,12 @@ public abstract class Gun : WeaponBase
         public int NowMagazine = 0;
         //マガジンに装填できる最大数
         public int MaxMagazine = 0;
+        //ブレ具合
+        public Vector2 Spread;
         //弾の出現するポジション
         public Transform Muzzle;
         //使用する弾のオブジェクト
         public GameObject UsedBulletObj;
-
-        //TODO:ブレ具合実装
     }
 
     public GunInformation GunInfo;
