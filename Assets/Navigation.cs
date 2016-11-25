@@ -16,7 +16,7 @@ public class Navigation : MonoBehaviour {
         {
             Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit = new RaycastHit();
-            if(Physics.Raycast(r,out hit))
+            if(Physics.Raycast(r,out hit,Mathf.Infinity))
             {
                 agent.destination = hit.point;
                 Debug.Log(hit.point);
