@@ -76,23 +76,26 @@ public abstract class Gun : WeaponBase
     public override void Reload()
     {
         //所持弾数が0より多い　かつ マガジンが最大ではない
-        if (GunInfo.NowBulletsNum > 0 ||
+        if (GunInfo.NowBulletsNum > 0 &&
             GunInfo.NowMagazine != GunInfo.MaxMagazine)
         {
             base.Reload();
 
             Audio.PlayOneShot(Sounds.ReloadSound);
+            //補填数
+            int Compensation = GunInfo.MaxMagazine - GunInfo.NowMagazine;
 
-            //マガジン1つ分はある
-            if(GunInfo.NowBulletsNum >= GunInfo.MaxMagazine)
+            //補填数分はある
+            if (GunInfo.NowBulletsNum >= Compensation)
             {
-                GunInfo.NowMagazine = GunInfo.MaxMagazine;
-                GunInfo.NowBulletsNum -= GunInfo.MaxMagazine;
+                //補填
+                GunInfo.NowMagazine += Compensation;
+                GunInfo.NowBulletsNum -= Compensation;
             }
             //足りない
             else
             {
-                GunInfo.NowMagazine = GunInfo.NowBulletsNum;
+                GunInfo.NowMagazine += GunInfo.NowBulletsNum;
                 GunInfo.NowBulletsNum = 0;
             }
         }
