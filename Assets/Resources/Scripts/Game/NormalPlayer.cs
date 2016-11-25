@@ -13,4 +13,9 @@ class NormalPlayer : PlayerBase
     {
         base.Update();
     }
+
+    public override void Attack()
+    {
+        base.Attack();
+    }
 }
