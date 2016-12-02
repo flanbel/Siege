@@ -1,0 +1,207 @@
+fileFormatVersion: 2
+guid: 12996c17a9122914c96b2f3810da19d4
+timeCreated: 1480050603
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Chest
+    100002: Chest_branch
+    100004: Head
+    100006: Head_end
+    100008: LeftFoot
+    100010: LeftIndexDistal
+    100012: LeftIndexDistal_end
+    100014: LeftIndexIntermediate
+    100016: LeftIndexProximal
+    100018: LeftLittleDistal
+    100020: LeftLittleDistal_end
+    100022: LeftLittleIntermediate
+    100024: LeftLittleProximal
+    100026: LeftLowerArm
+    100028: LeftLowerArm_branch
+    100030: LeftLowerLeg
+    100032: LeftMiddleDistal
+    100034: LeftMiddleDistal_end
+    100036: LeftMiddleIntermediate
+    100038: LeftMiddleProximal
+    100040: LeftRingDistal
+    100042: LeftRingDistal_end
+    100044: LeftRingIntermediate
+    100046: LeftRingProximal
+    100048: LeftShoulder
+    100050: LeftThumbDistal
+    100052: LeftThumbDistal_end
+    100054: LeftThumbIntermediate
+    100056: LeftThumbProximal
+    100058: LeftToeBase
+    100060: LeftToeBase_end
+    100062: LeftUpperArm
+    100064: LeftUpperLeg
+    100066: MUNE
+    100068: MUNE_end
+    100070: Neck
+    100072: RightFoot
+    100074: RightIndexDistal
+    100076: RightIndexDistal_end
+    100078: RightIndexIntermediate
+    100080: RightIndexProximal
+    100082: RightLittleDistal
+    100084: RightLittleDistal_end
+    100086: RightLittleIntermediate
+    100088: RightLittleProximal
+    100090: RightLowerArm
+    100092: RightLowerArm_branch
+    100094: RightLowerLeg
+    100096: RightMiddleDistal
+    100098: RightMiddleDistal_end
+    100100: RightMiddleIntermediate
+    100102: RightMiddleProximal
+    100104: RightRingDistal
+    100106: RightRingDistal_end
+    100108: RightRingIntermediate
+    100110: RightRingProximal
+    100112: RightShoulder
+    100114: RightThumbDistal
+    100116: RightThumbDistal_end
+    100118: RightThumbIntermediate
+    100120: RightThumbProximal
+    100122: RightToeBase
+    100124: RightToeBase_end
+    100126: RightUpperArm
+    100128: RightUpperLeg
+    100130: Spine
+    100132: //RootNode
+    400000: Chest
+    400002: Chest_branch
+    400004: Head
+    400006: Head_end
+    400008: LeftFoot
+    400010: LeftIndexDistal
+    400012: LeftIndexDistal_end
+    400014: LeftIndexIntermediate
+    400016: LeftIndexProximal
+    400018: LeftLittleDistal
+    400020: LeftLittleDistal_end
+    400022: LeftLittleIntermediate
+    400024: LeftLittleProximal
+    400026: LeftLowerArm
+    400028: LeftLowerArm_branch
+    400030: LeftLowerLeg
+    400032: LeftMiddleDistal
+    400034: LeftMiddleDistal_end
+    400036: LeftMiddleIntermediate
+    400038: LeftMiddleProximal
+    400040: LeftRingDistal
+    400042: LeftRingDistal_end
+    400044: LeftRingIntermediate
+    400046: LeftRingProximal
+    400048: LeftShoulder
+    400050: LeftThumbDistal
+    400052: LeftThumbDistal_end
+    400054: LeftThumbIntermediate
+    400056: LeftThumbProximal
+    400058: LeftToeBase
+    400060: LeftToeBase_end
+    400062: LeftUpperArm
+    400064: LeftUpperLeg
+    400066: MUNE
+    400068: MUNE_end
+    400070: Neck
+    400072: RightFoot
+    400074: RightIndexDistal
+    400076: RightIndexDistal_end
+    400078: RightIndexIntermediate
+    400080: RightIndexProximal
+    400082: RightLittleDistal
+    400084: RightLittleDistal_end
+    400086: RightLittleIntermediate
+    400088: RightLittleProximal
+    400090: RightLowerArm
+    400092: RightLowerArm_branch
+    400094: RightLowerLeg
+    400096: RightMiddleDistal
+    400098: RightMiddleDistal_end
+    400100: RightMiddleIntermediate
+    400102: RightMiddleProximal
+    400104: RightRingDistal
+    400106: RightRingDistal_end
+    400108: RightRingIntermediate
+    400110: RightRingProximal
+    400112: RightShoulder
+    400114: RightThumbDistal
+    400116: RightThumbDistal_end
+    400118: RightThumbIntermediate
+    400120: RightThumbProximal
+    400122: RightToeBase
+    400124: RightToeBase_end
+    400126: RightUpperArm
+    400128: RightUpperLeg
+    400130: Spine
+    400132: //RootNode
+    7400000: Take 001
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
