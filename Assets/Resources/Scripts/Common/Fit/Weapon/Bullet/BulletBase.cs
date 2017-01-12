@@ -24,10 +24,11 @@ public abstract class BulletBase : MonoBehaviour {
 
     public BulletState State;
 
-    public void SetState(float power,Vector3 dir)
+    public void SetState(float power,Vector3 dir,Quaternion rot)
     {
         State.Power = power;
         State.Dir = dir;
+        transform.localRotation = rot;
     }
 
 	// Use this for initialization

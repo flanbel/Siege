@@ -132,12 +132,12 @@ public abstract class PlayerBase : MonoBehaviour
             Characon.Move(this.transform.TransformDirection(Vector3.right) * Time.deltaTime * MoveSpeed);
         }
 
-        //カメラのyが邪魔なので0になる。
+        //カメラのyが邪魔なので0にする。
         Dir.y = 0.0f;
         Characon.Move(Dir * Time.deltaTime * MoveSpeed);
 
         //マウスで回転。
-        transform.localEulerAngles += new Vector3(0.0f, Input.GetAxis("Mouse X"));
+        transform.localEulerAngles += new Vector3(-Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X")*1.2f);
 
         //重力を加算。
         AddGavity += Physics.gravity.y * Time.deltaTime;
@@ -145,7 +145,7 @@ public abstract class PlayerBase : MonoBehaviour
         ray = new Ray(transform.position, Vector3.down);
 
         //レイが当たっているか、地上に当たっているか。
-        if (Physics.Raycast(ray, 0.6f) || Characon.isGrounded)
+        if (Physics.Raycast(ray, 1.2f) || Characon.isGrounded)
         {
             AddGavity = 0.0f;
             Jamp = false;

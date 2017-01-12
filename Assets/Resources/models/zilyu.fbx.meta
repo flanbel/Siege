@@ -1,47 +1,27 @@
 fileFormatVersion: 2
-guid: 45be48acf57127142a42bb3e0693a459
-timeCreated: 1481503988
+guid: 5f1b7d1f6bddf9b47942db57f76aa0ca
+timeCreated: 1481518189
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: KABE
-    100002: obj1
-    100004: obj2
-    100006: obj4
-    100008: TIKEI
-    100010: //RootNode
-    100012: "\u968E\u6BB5"
-    100014: "\u9AD8\u53F0"
-    400000: KABE
-    400002: obj1
-    400004: obj2
-    400006: obj4
-    400008: TIKEI
-    400010: //RootNode
-    400012: "\u968E\u6BB5"
-    400014: "\u9AD8\u53F0"
-    2300000: KABE
-    2300002: obj1
-    2300004: obj2
-    2300006: obj4
-    2300008: TIKEI
-    2300010: "\u968E\u6BB5"
-    2300012: "\u9AD8\u53F0"
-    3300000: KABE
-    3300002: obj1
-    3300004: obj2
-    3300006: obj4
-    3300008: TIKEI
-    3300010: "\u968E\u6BB5"
-    3300012: "\u9AD8\u53F0"
-    4300000: TIKEI
-    4300002: KABE
-    4300004: obj1
-    4300006: obj2
-    4300008: obj4
-    4300010: "\u968E\u6BB5"
-    4300012: "\u9AD8\u53F0"
+    100000: obj1
+    100002: obj2
+    100004: obj3
+    100006: //RootNode
+    400000: obj1
+    400002: obj2
+    400004: obj3
+    400006: //RootNode
+    2300000: obj1
+    2300002: obj2
+    2300004: obj3
+    3300000: obj1
+    3300002: obj2
+    3300004: obj3
+    4300000: obj1
+    4300002: obj2
+    4300004: obj3
   materials:
     importMaterials: 1
     materialName: 0

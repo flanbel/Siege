@@ -27,6 +27,6 @@ public class Handgun : Gun {
         //移動
         bullet.transform.localPosition = GunInfo.Muzzle.position;
         //設定
-        bullet.GetComponent<BulletBase>().SetState(Power, transform.forward);
+        bullet.GetComponent<BulletBase>().SetState(Power, transform.forward,transform.rotation);
     }
 }
