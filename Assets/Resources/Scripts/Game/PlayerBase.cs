@@ -37,6 +37,10 @@ public abstract class PlayerBase : MonoBehaviour
     bool Jamp = false;
     //レイ。
     Ray ray;
+    //カメラがターゲットしているプレイヤーの位置
+    Vector3 TargetPos;
+    //パッドから入力されたYの入力量。
+    float CameraAngleY;
 
     //キャラクターが鳴らす音。
     [System.Serializable]
@@ -75,10 +79,12 @@ public abstract class PlayerBase : MonoBehaviour
         Audio = gameObject.GetComponent<AudioSource>();
         State = PLAYERSTATE.WAIT;
         camera = Camera.main;
+        TargetPos = transform.position;
     }
 
     public void Update()
     {
+        TargetPos = transform.position;
         Move();
 
         //待機状態なら。
@@ -113,7 +119,19 @@ public abstract class PlayerBase : MonoBehaviour
     public virtual void Move()
     {
         //カメラから見たパッドの入力に変換。
-        Vector3 Dir = camera.transform.TransformDirection(Input.GetAxisRaw("Horizontal"), 0.0f, Input.GetAxisRaw("Vertical"));
+        Vector3 Dir = camera.transform.TransformDirection(Input.GetAxisRaw("Horizontal"), 0.0f, -Input.GetAxisRaw("Vertical"));
+        camera.transform.RotateAround(TargetPos, Vector3.up, Input.GetAxisRaw("Horizontal2"));
+        CameraAngleY = Input.GetAxisRaw("Vertical2");
+        if (-30 < camera.transform.rotation.y && camera.transform.rotation.y < 30)
+        {
+            camera.transform.Rotate(new Vector3(CameraAngleY, 0, 0));
+        }
+        
+        Vector3 pos;
+        pos.x = camera.transform.rotation.x;
+        pos.y = camera.transform.rotation.y;
+        pos.z = camera.transform.rotation.z;
+        Debug.Log(CameraAngleY);
         //WASD機能。
         if (Input.GetKey(KeyCode.W))
         {
