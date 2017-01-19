@@ -51,6 +51,7 @@ public class HealthPack : MonoBehaviour {
         if (col.gameObject.tag == "Player")
         {
             //回復させる
+            col.GetComponent<PlayerBase>().ItemRecovery(HealRate / 100);
 
             //一時的に消える 
             alive = false;

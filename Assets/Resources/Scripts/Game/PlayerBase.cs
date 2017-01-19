@@ -8,24 +8,39 @@ using System.Text;
 
 public abstract class PlayerBase : MonoBehaviour
 {
+    //ハンドガン。
+    GameObject handgun;
+    //Gun。
+    Gun gun;
     //キャラクターコントローラー。
     CharacterController Characon;
     //カメラ。
     Camera camera;
-    //キャラクターの体力。
-    public float HP = 0.0f;
-    //キャラクターの移動速度。
-    public float MoveSpeed = 0.0f;
-    //キャラクターが装備できるメイン武器の数。
-    public WeaponBase[] MainWeaponNum;
-    //キャラクターが装備できるサブの数。
-    public WeaponBase[] MainWeaponSub;
-    //キャラクターの自然回復量。(今の所は全キャラ一律)。
-    public float NaturalRecovery = 10;
-    //自衛用の攻撃力。
-    public float Power = 0.0f;
-    //攻撃間隔(Fream数)
-    public int AttackInterval = 0;
+    [System.Serializable]
+    //プレイヤーの情報。
+    public class PlayerInformation
+    {
+        //キャラクターの体力。
+        public float HP = 0.0f;
+        //キャラクターの体力の最大値。
+        public float MaxHP = 0.0f;
+        //キャラクターの移動速度。
+        public float MoveSpeed = 0.0f;
+        //キャラクターが装備できるメイン武器の数。
+        public WeaponBase[] MainWeaponNum;
+        //キャラクターが装備できるサブの数。
+        public WeaponBase[] MainWeaponSub;
+        //キャラクターの自然回復量。(今の所は全キャラ一律)。
+        public float NaturalRecovery = 10;
+        //自衛用の攻撃力。
+        public float Power = 0.0f;
+        //攻撃間隔(Fream数)
+        public int AttackInterval = 0;
+    }
+    public PlayerInformation playerInfo;
+
+   
+
     //設定されたインターバル
     int Interval = 0;
     //前のIntervalから経過しているフレーム数
@@ -77,6 +92,12 @@ public abstract class PlayerBase : MonoBehaviour
         //キャラクターコントローラーのコンポーネントを取得。
         Characon = this.GetComponent<CharacterController>();
         Audio = gameObject.GetComponent<AudioSource>();
+        //ゲームオブジェクトのハンドガンを検索。
+        handgun = GameObject.Find("HandGun");
+        //検索してきたハンドガンからGunのコンポーネントを取得。
+        gun = handgun.GetComponent<Gun>();
+        //プレイヤーに設定された最大HPを現在のHPに設定。
+        playerInfo.HP = playerInfo.MaxHP;
         State = PLAYERSTATE.WAIT;
         camera = Camera.main;
         TargetPos = transform.position;
@@ -86,7 +107,6 @@ public abstract class PlayerBase : MonoBehaviour
     {
         TargetPos = transform.position;
         Move();
-
         //待機状態なら。
         if (State == PLAYERSTATE.WAIT)
         {
@@ -111,7 +131,7 @@ public abstract class PlayerBase : MonoBehaviour
 
     public virtual void Attack()
     {
-        Interval = AttackInterval;
+        Interval = playerInfo.AttackInterval;
         State = PLAYERSTATE.ATTACK;
         //音再生。
     }
@@ -126,33 +146,28 @@ public abstract class PlayerBase : MonoBehaviour
         {
             camera.transform.Rotate(new Vector3(CameraAngleY, 0, 0));
         }
-        
-        Vector3 pos;
-        pos.x = camera.transform.rotation.x;
-        pos.y = camera.transform.rotation.y;
-        pos.z = camera.transform.rotation.z;
-        Debug.Log(CameraAngleY);
+
         //WASD機能。
         if (Input.GetKey(KeyCode.W))
         {
-            Characon.Move(this.transform.TransformDirection(Vector3.forward) * Time.deltaTime * MoveSpeed);
+            Characon.Move(this.transform.TransformDirection(Vector3.forward) * Time.deltaTime * playerInfo.MoveSpeed);
         }
         if (Input.GetKey(KeyCode.S))
         {
-            Characon.Move(this.transform.TransformDirection(Vector3.back) * Time.deltaTime * MoveSpeed);
+            Characon.Move(this.transform.TransformDirection(Vector3.back) * Time.deltaTime * playerInfo.MoveSpeed);
         }
         if (Input.GetKey(KeyCode.A))
         {
-            Characon.Move(this.transform.TransformDirection(Vector3.left) * Time.deltaTime * MoveSpeed);
+            Characon.Move(this.transform.TransformDirection(Vector3.left) * Time.deltaTime * playerInfo.MoveSpeed);
         }
         if (Input.GetKey(KeyCode.D))
         {
-            Characon.Move(this.transform.TransformDirection(Vector3.right) * Time.deltaTime * MoveSpeed);
+            Characon.Move(this.transform.TransformDirection(Vector3.right) * Time.deltaTime * playerInfo.MoveSpeed);
         }
 
         //カメラのyが邪魔なので0にする。
         Dir.y = 0.0f;
-        Characon.Move(Dir * Time.deltaTime * MoveSpeed);
+        Characon.Move(Dir * Time.deltaTime * playerInfo.MoveSpeed);
 
         //マウスで回転。
         transform.localEulerAngles += new Vector3(-Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X")*1.2f);
@@ -177,6 +192,7 @@ public abstract class PlayerBase : MonoBehaviour
                 Jamp = true;
             }
 
+            //XboxコントローラーのAボタン。
             if(Input.GetKey("joystick button 0"))
             {
                 Jamp = true;
@@ -190,5 +206,21 @@ public abstract class PlayerBase : MonoBehaviour
 
         Characon.Move(new Vector3(0, AddGavity, 0) * Time.deltaTime);
     }
+    //所持している銃の弾の数を増やす。
+    public void AddNowBullet(int addnum)
+    {
+        gun.AddBullets(addnum);
+    }
+  
+    //プレイヤーのHPの増減処理。
+    public void AddHp(float addnum)
+    {
+        playerInfo.HP += addnum;
+    }
 
+    //アイテムを使ったHPの回復処理。
+    public void ItemRecovery(float rate)
+    {
+       playerInfo.HP += playerInfo.MaxHP * rate;
+    }
 }
