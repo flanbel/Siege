@@ -2,14 +2,16 @@
 using UnityEngine.Networking;
 using System.Collections;
 
+//必須コンポーネント
+[RequireComponent(typeof(CharacterController))]
+
 public class Player : NetworkBehaviour
 {
     //キャラクターコントローラー
     CharacterController Characon;
-    //アニメーター
-    public Animator Ani;
     //ネットワークのオブジェクトを識別する。
     NetworkIdentity Identity;
+    Player_Move move;
     [SerializeField]
     float AddGavity = 0.0f;
     [SerializeField]
@@ -37,7 +39,8 @@ public class Player : NetworkBehaviour
         //コンポーネント取得
         Identity = this.GetComponent<NetworkIdentity>();
 
-        Ani = this.GetComponent<Animator>();
+        //
+        move = this.GetComponent<Player_Move>();
     }
 	
 	// Update is called once per frame
@@ -45,30 +48,27 @@ public class Player : NetworkBehaviour
         //ローカルなオブジェクト(ローカル側で生成された)なら
         if (Identity.isLocalPlayer)
         {
-            //アニメーションがある　かつ　Lキー
-            if (Ani && Input.GetKeyDown(KeyCode.L))
-            {
-                //アニメーションのトリガー設定
-                Ani.SetTrigger("WalkTrigger");
-            }
-
+            Vector3 dir = Vector3.zero;
             //WASD機能
             if (Input.GetKey(KeyCode.W))
             {
-                Characon.Move(this.transform.TransformDirection(Vector3.forward) * Time.deltaTime * Speed);
+                dir = this.transform.TransformDirection(Vector3.forward) * Time.deltaTime * Speed;
             }
             if (Input.GetKey(KeyCode.S))
             {
-                Characon.Move(this.transform.TransformDirection(Vector3.back) * Time.deltaTime * Speed);
+                dir = this.transform.TransformDirection(Vector3.back) * Time.deltaTime * Speed;
             }
             if (Input.GetKey(KeyCode.A))
             {
-                Characon.Move(this.transform.TransformDirection(Vector3.left) * Time.deltaTime * Speed);
+                dir = this.transform.TransformDirection(Vector3.left) * Time.deltaTime * Speed;
             }
             if (Input.GetKey(KeyCode.D))
             {
-                Characon.Move(this.transform.TransformDirection(Vector3.right) * Time.deltaTime * Speed);
+                dir = this.transform.TransformDirection(Vector3.right) * Time.deltaTime * Speed;
             }
+            //移動
+            move.Transmit(dir);
+
             //マウスで回転
             transform.localEulerAngles += new Vector3(0.0f, Input.GetAxis("Mouse X"));
 
