@@ -70,7 +70,7 @@ public class HeavyMachineGun : Gun
                 Vector3 dir = transform.TransformDirection(Vector3.forward);
                 dir.x += Random.Range(-GunInfo.Spread.x, GunInfo.Spread.x);
                 dir.y += Random.Range(-GunInfo.Spread.y, GunInfo.Spread.y);
-                bullet.GetComponent<BulletBase>().SetState(Power, dir);
+                bullet.GetComponent<BulletBase>().SetState(Power, dir, transform.rotation);
             }
         }
     }
