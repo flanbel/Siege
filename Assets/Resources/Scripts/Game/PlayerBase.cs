@@ -150,19 +150,19 @@ public abstract class PlayerBase : MonoBehaviour
         //WASD機能。
         if (Input.GetKey(KeyCode.W))
         {
-            Characon.Move(this.transform.TransformDirection(Vector3.forward) * Time.deltaTime * playerInfo.MoveSpeed);
+            Dir = Vector3.forward;
         }
         if (Input.GetKey(KeyCode.S))
         {
-            Characon.Move(this.transform.TransformDirection(Vector3.back) * Time.deltaTime * playerInfo.MoveSpeed);
+            Dir = Vector3.back;
         }
         if (Input.GetKey(KeyCode.A))
         {
-            Characon.Move(this.transform.TransformDirection(Vector3.left) * Time.deltaTime * playerInfo.MoveSpeed);
+            Dir = Vector3.left;
         }
         if (Input.GetKey(KeyCode.D))
         {
-            Characon.Move(this.transform.TransformDirection(Vector3.right) * Time.deltaTime * playerInfo.MoveSpeed);
+            Dir = Vector3.right;
         }
 
         //カメラのyが邪魔なので0にする。
