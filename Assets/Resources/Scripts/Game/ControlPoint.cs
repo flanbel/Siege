@@ -55,7 +55,7 @@ public class ControlPoint : MonoBehaviour {
     public void OnTriggerEnter(Collider col)
     {
         //奪取しに来た
-        if (col.gameObject.tag == "Player")
+        if (col.gameObject.tag == "Blue_Team_Player")
         {
             DeprivationPeople++;
         }
@@ -64,7 +64,7 @@ public class ControlPoint : MonoBehaviour {
     public void OnTriggerExit(Collider col)
     {
         //出て行った
-        if (col.gameObject.tag == "Player")
+        if (col.gameObject.tag == "Blue_Team_Player")
         {
             DeprivationPeople--;
         }

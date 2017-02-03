@@ -11,6 +11,8 @@ public class GameRule : MonoBehaviour {
 
     //時間を表示するテキストオブジェクト
     public Text DisplayTimeText;
+    //延長戦
+
     //ゲームセットのテキストオブジェクト
     public GameObject Gamesset;
     public bool GameSet = false;
@@ -51,7 +53,8 @@ public class GameRule : MonoBehaviour {
             //まだ奪取中なら延長戦
             if (ControlPoint.rate > 0.0f)
             {
-
+                DisplayTimeText.text = "延長戦！！";
+                DisplayTimeText.color = Color.red;
             }
             else
             {
