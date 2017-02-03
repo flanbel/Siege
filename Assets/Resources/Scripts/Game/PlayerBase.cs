@@ -27,23 +27,35 @@ public abstract class PlayerBase : MonoBehaviour
         //キャラクターの移動速度。
         public float MoveSpeed = 0.0f;
         //キャラクターが装備できるメイン武器の数。
-        public WeaponBase[] MainWeaponNum;
-        //キャラクターが装備できるサブの数。
-        public WeaponBase[] MainWeaponSub;
+        public Fit[] MainWeaponNum;
+        //今現在装備している武器のインデックス。
+        public int NowWeaponIndex = 0;
+        //装備している武器。
+        public Fit SelectFit;
         //キャラクターの自然回復量。(今の所は全キャラ一律)。
         public float NaturalRecovery = 10;
         //自衛用の攻撃力。
         public float Power = 0.0f;
-        //攻撃間隔(Fream数)
+        //攻撃間隔(Fream数)。
         public int AttackInterval = 0;
+        //プレイヤーの現在の状態。
+        public PlayerState NowPlayerState = 0;
     }
     public PlayerInformation playerInfo;
 
-   
-
-    //設定されたインターバル
+    public enum PlayerState
+    {
+        State=0,
+        Walk,
+    };
+    
+    //子。
+    public GameObject[] child;
+    //マウスのホイールの値を格納。
+    float MouseScrollValue;
+    //設定されたインターバル。
     int Interval = 0;
-    //前のIntervalから経過しているフレーム数
+    //前のIntervalから経過しているフレーム数。
     [SerializeField]
     int Elapsed = 0;
     //重力。
@@ -52,7 +64,7 @@ public abstract class PlayerBase : MonoBehaviour
     bool Jamp = false;
     //レイ。
     Ray ray;
-    //カメラがターゲットしているプレイヤーの位置
+    //カメラがターゲットしているプレイヤーの位置。
     Vector3 TargetPos;
     //パッドから入力されたYの入力量。
     float CameraAngleY;
@@ -101,10 +113,21 @@ public abstract class PlayerBase : MonoBehaviour
         State = PLAYERSTATE.WAIT;
         camera = Camera.main;
         TargetPos = transform.position;
+
+
+        //child = Resources.LoadAll<Fit>("Prafabs/Fit/Weapon");
+        //プレイヤーが所持している武器からインスタンスを生成。
+        //for (int i = 0; i < playerInfo.MainWeaponNum.Length; i++)
+        //{
+        //    child[i] = (GameObject)Instantiate(playerInfo.MainWeaponNum[i], Vector3.zero, Quaternion.identity);
+        //    child[i].transform.SetParent(transform);
+        //    child[i].transform.localPosition = new Vector3(0.57f, 0.0f, 0.81f);
+        // }
     }
 
     public void Update()
     {
+       
         TargetPos = transform.position;
         Move();
         //待機状態なら。
@@ -127,6 +150,9 @@ public abstract class PlayerBase : MonoBehaviour
                 State = PLAYERSTATE.WAIT;
             }
         }
+
+        WeaponChange();
+
     }
 
     public virtual void Attack()
@@ -222,5 +248,44 @@ public abstract class PlayerBase : MonoBehaviour
     public void ItemRecovery(float rate)
     {
        playerInfo.HP += playerInfo.MaxHP * rate;
+    }
+    public void WeaponChange()
+    {
+        //何か装備していたらホイールで武器切り替えをする。
+        if (playerInfo.MainWeaponNum.Length > 1)
+        {
+            MouseScrollValue = Input.GetAxis("Mouse ScrollWheel");
+            //ホイールが手前に入力。
+            //武器の配列の位置を一つ後ろに進める。
+            if (MouseScrollValue < 0.0f)
+            {
+                playerInfo.NowWeaponIndex = (playerInfo.NowWeaponIndex + 1) % playerInfo.MainWeaponNum.Length;
+                //切り替えが発生したので武器を設定。
+                playerInfo.SelectFit = playerInfo.MainWeaponNum[playerInfo.NowWeaponIndex];
+            }
+            //ホイールが奥に入力。
+            //武器の配列の位置を一つ前に進める。
+            if (MouseScrollValue > 0.0f)
+            {
+                //配列の添え字が0なら一番最後の添え字にジャンプ。
+                if (playerInfo.NowWeaponIndex == 0)
+                {
+                    playerInfo.NowWeaponIndex = playerInfo.MainWeaponNum.Length - 1;
+                }
+                else
+                {
+                    playerInfo.NowWeaponIndex--;
+                }
+                //切り替えが発生したので武器を設定。
+                playerInfo.SelectFit = playerInfo.MainWeaponNum[playerInfo.NowWeaponIndex];
+            }
+            //パッドでの武器切り替え。
+            //if(Input.GetKey("3rd Axis"))
+            //{
+            //    playerInfo.NowWeaponIndex = (playerInfo.NowWeaponIndex + 1) % playerInfo.MainWeaponNum.Length;
+            //    //切り替えが発生したので武器を設定。
+            //    playerInfo.SelectFit = playerInfo.MainWeaponNum[playerInfo.NowWeaponIndex];
+            //}
+        }
     }
 }
