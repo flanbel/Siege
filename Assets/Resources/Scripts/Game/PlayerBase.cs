@@ -15,7 +15,8 @@ public abstract class PlayerBase : MonoBehaviour
     //キャラクターコントローラー。
     CharacterController Characon;
     //カメラ。
-    Camera camera;
+    new Camera camera;
+
     [System.Serializable]
     //プレイヤーの情報。
     public class PlayerInformation
@@ -48,8 +49,9 @@ public abstract class PlayerBase : MonoBehaviour
         State=0,
         Walk,
     };
-    
-    //子。
+
+    GameObject Spawner;
+    //選択した武器のインスタンスをまとめて格納。
     public GameObject[] child;
     //マウスのホイールの値を格納。
     float MouseScrollValue;
@@ -101,6 +103,7 @@ public abstract class PlayerBase : MonoBehaviour
 
     public void Start()
     {
+        Spawner = GameObject.Find("Spawner");
         //キャラクターコントローラーのコンポーネントを取得。
         Characon = this.GetComponent<CharacterController>();
         Audio = gameObject.GetComponent<AudioSource>();
@@ -114,15 +117,8 @@ public abstract class PlayerBase : MonoBehaviour
         camera = Camera.main;
         TargetPos = transform.position;
 
+        PlayerWeaponSet();
 
-        //child = Resources.LoadAll<Fit>("Prafabs/Fit/Weapon");
-        //プレイヤーが所持している武器からインスタンスを生成。
-        //for (int i = 0; i < playerInfo.MainWeaponNum.Length; i++)
-        //{
-        //    child[i] = (GameObject)Instantiate(playerInfo.MainWeaponNum[i], Vector3.zero, Quaternion.identity);
-        //    child[i].transform.SetParent(transform);
-        //    child[i].transform.localPosition = new Vector3(0.57f, 0.0f, 0.81f);
-        // }
     }
 
     public void Update()
@@ -174,21 +170,22 @@ public abstract class PlayerBase : MonoBehaviour
         }
 
         //WASD機能。
+        //カメラから見たキー入力に変更。
         if (Input.GetKey(KeyCode.W))
         {
-            Dir = Vector3.forward;
+            Dir = camera.transform.TransformDirection(0.0f, 0.0f, 1.0f);
         }
         if (Input.GetKey(KeyCode.S))
         {
-            Dir = Vector3.back;
+            Dir = camera.transform.TransformDirection(0.0f, 0.0f, -1.0f);
         }
         if (Input.GetKey(KeyCode.A))
         {
-            Dir = Vector3.left;
+            Dir = camera.transform.TransformDirection(-1.0f, 0.0f, 0.0f);
         }
         if (Input.GetKey(KeyCode.D))
         {
-            Dir = Vector3.right;
+            Dir = camera.transform.TransformDirection(1.0f, 0.0f, 0.0f);
         }
 
         //カメラのyが邪魔なので0にする。
@@ -231,6 +228,7 @@ public abstract class PlayerBase : MonoBehaviour
         }
 
         Characon.Move(new Vector3(0, AddGavity, 0) * Time.deltaTime);
+        State = PLAYERSTATE.MOVE;
     }
     //所持している銃の弾の数を増やす。
     public void AddNowBullet(int addnum)
@@ -280,12 +278,25 @@ public abstract class PlayerBase : MonoBehaviour
                 playerInfo.SelectFit = playerInfo.MainWeaponNum[playerInfo.NowWeaponIndex];
             }
             //パッドでの武器切り替え。
-            //if(Input.GetKey("3rd Axis"))
-            //{
-            //    playerInfo.NowWeaponIndex = (playerInfo.NowWeaponIndex + 1) % playerInfo.MainWeaponNum.Length;
-            //    //切り替えが発生したので武器を設定。
-            //    playerInfo.SelectFit = playerInfo.MainWeaponNum[playerInfo.NowWeaponIndex];
-            //}
+            if (Input.GetKey("joystick button 3"))
+            {
+                playerInfo.NowWeaponIndex = (playerInfo.NowWeaponIndex + 1) % playerInfo.MainWeaponNum.Length;
+                //切り替えが発生したので武器を設定。
+                playerInfo.SelectFit = playerInfo.MainWeaponNum[playerInfo.NowWeaponIndex];
+            }
+        }
+    }
+    //生成した武器をプレイヤーの子にする処理。
+    public void PlayerWeaponSet()
+    {
+        child = new GameObject[playerInfo.MainWeaponNum.Length];
+        //child = Resources.LoadAll<Fit>("Prafabs/Fit/Weapon");
+        //プレイヤーが所持している武器からインスタンスを生成。
+        for (int i = 0; i < playerInfo.MainWeaponNum.Length; i++)
+        {
+            child[i] = (GameObject)Instantiate(playerInfo.MainWeaponNum[i].gameObject, Vector3.zero, Quaternion.identity);
+            child[i].transform.SetParent(transform);
+            child[i].transform.localPosition = new Vector3(0.57f, 0.0f, 0.81f);
         }
     }
 }
