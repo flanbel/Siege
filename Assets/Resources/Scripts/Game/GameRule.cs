@@ -11,9 +11,9 @@ public class GameRule : MonoBehaviour {
 
     //時間を表示するテキストオブジェクト
     public Text DisplayTimeText;
-
+    //ゲームセットのテキストオブジェクト
     public GameObject Gamesset;
-    bool GameSet = false;
+    public bool GameSet = false;
 
     // Use this for initialization
     void Start () {

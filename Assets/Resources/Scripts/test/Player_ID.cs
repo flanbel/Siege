@@ -5,15 +5,16 @@ using System.Collections;
 
 public class Player_ID : NetworkBehaviour
 {
-
+    
     //SyncVar: [Command]で変更後、全クライアントへ変更結果を送信
     [SyncVar]
     private string playerUniqueIdentity;
-    //???
+    //ID
     private NetworkInstanceId playerNetID;
     private Transform myTransform;
 
     //NetworkManagerによってPlayerが生成された時に実行される
+    //自分のみ、相手のプレイヤーは無視
     public override void OnStartLocalPlayer()
     {
         GetNetIdentity();
@@ -30,7 +31,7 @@ public class Player_ID : NetworkBehaviour
     void Update()
     {
         //例外が発生した時にSetIdentityメソッド実行
-        if (myTransform.name == "" || myTransform.name == "Player(Clone)")
+        if (myTransform.name == "" || myTransform.name == "testPlayer(Clone)")
         {
             SetIdentity();
         }

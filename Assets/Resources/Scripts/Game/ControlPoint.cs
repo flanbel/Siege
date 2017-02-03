@@ -14,6 +14,7 @@ public class ControlPoint : MonoBehaviour {
     public Text DisplayDeprivationPeople;
     //イメージ
     public Image DisplayDeprivationRate;
+    public GameRule Rule;
 
     // Use this for initialization
     void Start () {
@@ -22,26 +23,33 @@ public class ControlPoint : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        //誰か奪取中
-        if (DeprivationPeople > 0)
+        //ゲームが終了していない。
+        if (!Rule.GameSet)
         {
-            DeprivationRate += PoinstPerSecond;
-        }//誰もとってない
-        else if(DeprivationRate < 100.0f)
-        {
-            //減速速度は1/2（適当）
-            DeprivationRate -= PoinstPerSecond / 2.0f;
-            //0より小さくさせない
-            if (DeprivationRate < 0.0f)
-                DeprivationRate = 0;
+
+            //誰か奪取中
+            if (DeprivationPeople > 0)
+            {
+                //ポイント増加
+                DeprivationRate += PoinstPerSecond;
+            }//誰もとってない
+            else if (DeprivationRate < 100.0f)
+            {
+                //ポイント減少
+                //減速速度は1/2（適当）
+                DeprivationRate -= PoinstPerSecond / 2.0f;
+                //0より小さくさせない
+                if (DeprivationRate < 0.0f)
+                    DeprivationRate = 0;
+            }
+            //ゲージ更新
+            DisplayDeprivationRate.fillAmount = DeprivationRate / 100.0f;
+            //人数をテキストに
+            if (DeprivationPeople > 0)
+                DisplayDeprivationPeople.text = DeprivationPeople.ToString();
+            else
+                DisplayDeprivationPeople.text = "";
         }
-        //ゲージ更新
-        DisplayDeprivationRate.fillAmount = DeprivationRate / 100.0f;
-        //人数をテキストに
-        if (DeprivationPeople > 0)
-            DisplayDeprivationPeople.text = DeprivationPeople.ToString();
-        else
-            DisplayDeprivationPeople.text = "";
     }
 
     public void OnTriggerEnter(Collider col)

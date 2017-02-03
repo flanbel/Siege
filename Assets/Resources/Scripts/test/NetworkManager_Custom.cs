@@ -6,7 +6,6 @@ using UnityEngine.Networking;
 //ネットワークマネージャーを継承
 public class NetworkManager_Custom : NetworkManager {
 
-
     public GameObject SceneCamera;
 
     //ButtonStartHostボタンを押した時に実行
@@ -42,7 +41,7 @@ public class NetworkManager_Custom : NetworkManager {
 
     //プレイヤーが追加された時
     public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
-    {        
+    {
         //基底クラスのOnServerAddPlayerを呼び出す
         base.OnServerAddPlayer(conn, playerControllerId);
     }

@@ -67,7 +67,7 @@ public class Player : NetworkBehaviour
                 dir = this.transform.TransformDirection(Vector3.right) * Time.deltaTime * Speed;
             }
             //移動
-            move.Transmit(dir);
+            move.SendMove(dir);
 
             //マウスで回転
             transform.localEulerAngles += new Vector3(0.0f, Input.GetAxis("Mouse X"));
