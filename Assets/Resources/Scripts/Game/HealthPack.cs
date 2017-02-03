@@ -48,7 +48,8 @@ public class HealthPack : MonoBehaviour {
     //触れた瞬間
     public void OnTriggerEnter(Collider col)
     {
-        if (col.gameObject.tag == "Player")
+        if (col.gameObject.tag == "Red_Team_Player" ||
+            col.gameObject.tag == "Blue_Team_Player")
         {
             //回復させる
             col.GetComponent<PlayerBase>().ItemRecovery(HealRate / 100);

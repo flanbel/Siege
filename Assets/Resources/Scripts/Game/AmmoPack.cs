@@ -21,7 +21,8 @@ public class AmmoPack : MonoBehaviour {
     public void OnCollisionEnter(Collision collision)
     {
         //プレイヤーに当たったなら
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.tag == "Red_Team_Player" ||
+            collision.gameObject.tag == "Blue_Team_Player")
         {
 
         }
