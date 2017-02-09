@@ -70,6 +70,19 @@ public abstract class PlayerBase : MonoBehaviour
     Vector3 TargetPos;
     //パッドから入力されたYの入力量。
     float CameraAngleY;
+    //何番目のプレイヤーかの添え字
+    private int PlayerIndex = 0;
+
+    public int index
+    {
+        get{
+            return PlayerIndex;
+        }
+
+        set { PlayerIndex = value; }
+    }
+
+    
 
     //キャラクターが鳴らす音。
     [System.Serializable]
