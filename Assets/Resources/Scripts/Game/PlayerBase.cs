@@ -54,6 +54,7 @@ public abstract class PlayerBase : MonoBehaviour
         public int AttackInterval = 0;
         //ステートマシン
         public PLAYERSTATE State = PLAYERSTATE.WAIT;
+        //カメラの回転度。
     }
     public PlayerInformation playerInfo;
 
@@ -75,8 +76,6 @@ public abstract class PlayerBase : MonoBehaviour
     Ray ray;
     //カメラがターゲットしているプレイヤーの位置。
     Vector3 TargetPos;
-    //パッドから入力されたYの入力量。
-    float CameraAngleY;
     //何番目のプレイヤーかの添え字
     private int PlayerIndex = 0;
 
@@ -108,8 +107,18 @@ public abstract class PlayerBase : MonoBehaviour
 
     public void Start()
     {
-        //リスポーン地点を取得。
-        Spawner = GameObject.Find("Blue_Spawner");
+        //プレイヤーがどのチームに所属しているかチェック。
+        tag = gameObject.tag;
+        if (tag == "Red_Team_Player")
+        {
+            //赤チームのリスポーン地点を取得。
+            Spawner = GameObject.Find("Red_Spawner");
+        }
+        else if (tag == "Blue_Team_Player")
+        {
+            //青チームのリスポーン地点を取得。
+            Spawner = GameObject.Find("Blue_Spawner");
+        }
         //リスポーン地点内にプレイヤーを配置。
         this.transform.position = new Vector3(Random.Range(0.0f, Spawner.transform.localScale.x / 2.0f), 1.0f, Random.Range(0.0f, Spawner.transform.localScale.z / 2.0f)) + Spawner.transform.localPosition;
         //キャラクターコントローラーのコンポーネントを取得。
@@ -178,9 +187,15 @@ public abstract class PlayerBase : MonoBehaviour
         //カメラから見たパッドの入力に変換。
         Vector3 Dir = camera.transform.TransformDirection(KeyState.LeftStickAxis.x, 0.0f, KeyState.LeftStickAxis.y);
         transform.RotateAround(TargetPos, Vector3.up, KeyState.rightStickAxis.x);
-        
-        //CameraAngleY = KeyState.rightStickAxis.y;
-        if (-30 < transform.rotation.x && transform.rotation.x < 30)
+
+        float angle = transform.eulerAngles.x + -KeyState.rightStickAxis.y;
+        //if ((0 < angle && angle < 40) || (angle < 0 && angle < -330))
+        //{
+        //    transform.Rotate(-KeyState.rightStickAxis.y, 0.0f, 0.0f);
+        //}
+
+        if(Mathf.Abs(angle)>40&&
+            Mathf.Abs(angle)<360-30)
         {
             transform.Rotate(-KeyState.rightStickAxis.y, 0.0f, 0.0f);
         }
@@ -205,6 +220,8 @@ public abstract class PlayerBase : MonoBehaviour
 
         //カメラのyが邪魔なので0にする。
         Dir.y = 0.0f;
+        //入力量を直接移動量にしていたので極端に下を見ると入力量が減り移動が遅くなるので正規化して解決。
+        Dir.Normalize();
         Characon.Move(Dir * Time.deltaTime * playerInfo.MoveSpeed);
 
         //マウスで回転。
