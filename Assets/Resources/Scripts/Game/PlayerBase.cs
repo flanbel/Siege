@@ -103,7 +103,10 @@ public abstract class PlayerBase : MonoBehaviour
 
     public void Start()
     {
-        Spawner = GameObject.Find("Spawner");
+        //リスポーン地点を取得。
+        Spawner = GameObject.Find("Blue_Spawner");
+        //リスポーン地点内にプレイヤーを配置。
+        this.transform.position = new Vector3(Random.Range(0.0f, Spawner.transform.localScale.x / 2.0f), 1.0f, Random.Range(0.0f, Spawner.transform.localScale.z / 2.0f)) + Spawner.transform.localPosition;
         //キャラクターコントローラーのコンポーネントを取得。
         Characon = this.GetComponent<CharacterController>();
         Audio = gameObject.GetComponent<AudioSource>();
@@ -162,8 +165,8 @@ public abstract class PlayerBase : MonoBehaviour
     {
         //カメラから見たパッドの入力に変換。
         Vector3 Dir = camera.transform.TransformDirection(Input.GetAxisRaw("Horizontal"), 0.0f, -Input.GetAxisRaw("Vertical"));
-        camera.transform.RotateAround(TargetPos, Vector3.up, Input.GetAxisRaw("Horizontal2"));
-        CameraAngleY = Input.GetAxisRaw("Vertical2");
+        camera.transform.RotateAround(TargetPos, Vector3.up, Input.GetAxisRaw("Horizontal1"));
+        CameraAngleY = Input.GetAxisRaw("Vertical1");
         if (-30 < camera.transform.rotation.y && camera.transform.rotation.y < 30)
         {
             camera.transform.Rotate(new Vector3(CameraAngleY, 0, 0));
