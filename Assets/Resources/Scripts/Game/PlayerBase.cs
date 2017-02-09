@@ -109,7 +109,7 @@ public abstract class PlayerBase : MonoBehaviour
     public PlayerSounds PlayaerSounds;
     protected AudioSource Audio;
 
-    public void Start()
+    public void Awake()
     {
         playerInfo.SelectFit = playerInfo.MainWeaponNum[playerInfo.NowWeaponIndex];
 
@@ -148,10 +148,7 @@ public abstract class PlayerBase : MonoBehaviour
         //キャラクターコントローラーのコンポーネントを取得。
         Characon = this.GetComponent<CharacterController>();
         Audio = gameObject.GetComponent<AudioSource>();
-        //ゲームオブジェクトのハンドガンを検索。
-        handgun = GameObject.Find("HandGun");
-        //検索してきたハンドガンからGunのコンポーネントを取得。
-        gun = handgun.GetComponent<Gun>();
+        
         //プレイヤーに設定された最大HPを現在のHPに設定。
         playerInfo.HP = playerInfo.MaxHP;
         playerInfo.State = PLAYERSTATE.WAIT;
@@ -377,6 +374,8 @@ public abstract class PlayerBase : MonoBehaviour
         //プレイヤーが所持している武器からインスタンスを生成。
         for (int i = 0; i < playerInfo.MainWeaponNum.Length; i++)
         {
+            if (child[i] == null)
+                continue;
             child[i] = (GameObject)Instantiate(playerInfo.MainWeaponNum[i].gameObject, Vector3.zero, Quaternion.identity);
             child[i].transform.SetParent(transform);
             child[i].transform.localPosition = new Vector3(0.57f, 0.0f, 0.81f);
