@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
+using GamepadInput;
 
 //必須コンポーネント
 [RequireComponent(typeof(AudioSource))]
@@ -22,6 +23,8 @@ public abstract class WeaponBase : Fit
         //行動不可
         NOTACTIVE
     };
+
+    public int idx = 0;
 
     //武器が鳴らす音たち
     [System.Serializable]
@@ -59,6 +62,7 @@ public abstract class WeaponBase : Fit
     {
         State = WEAPONSTATE.WAIT;
         Audio = gameObject.GetComponent<AudioSource>();
+        idx = transform.parent.GetComponent<NormalPlayer>().index;
     }
 
     // Update is called once per frame
@@ -67,8 +71,16 @@ public abstract class WeaponBase : Fit
         //待機状態なら
         if (State == WEAPONSTATE.WAIT)
         {
+            var KeyState = GamePad.GetState((GamePad.Index)idx+1, false);
+            if(KeyState.RightShoulder)
+            {
+                Attack();
+            }
+            if(KeyState.LeftShoulder)
+            {
+                Reload();
+            }
             //ホントはプレイヤーでするとこだと思うんです！！！
-
             //マウスの左クリックが押されている間
             if (Input.GetMouseButton(0))
             {
