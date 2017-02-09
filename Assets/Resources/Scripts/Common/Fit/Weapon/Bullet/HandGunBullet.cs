@@ -10,7 +10,7 @@ public class HandGunBullet : BulletBase
 	}
 	
 	// Update is called once per frame
-	new void Update () {
+	void FixedUpdate() {
         base.Update();
 	}
 }
