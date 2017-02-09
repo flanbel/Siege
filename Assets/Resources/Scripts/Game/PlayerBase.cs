@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GamepadInput;
+using UnityEngine.UI;
 
 //必須コンポーネント。
 [RequireComponent(typeof(AudioSource))]
@@ -34,29 +35,8 @@ public abstract class PlayerBase : MonoBehaviour
     //プレイヤーの情報。
     public class PlayerInformation
     {
-        [SerializeField]
         //キャラクターの体力。
-        private float HP = 0.0f;
-        public float hp
-        {
-            set
-            {
-                if(MaxHP > HP + value)
-                {
-                    HP += value;
-                }
-                //HPがMax値を超えるのでMax値にする。
-                else
-                {
-                    HP = MaxHP;
-                }
-            }
-
-            get
-            {
-                return HP;
-            }
-        }
+        public float HP = 0.0f;
         //キャラクターの体力の最大値。
         public float MaxHP = 0.0f;
         //キャラクターの移動速度。
@@ -100,7 +80,8 @@ public abstract class PlayerBase : MonoBehaviour
     Vector3 TargetPos;
     //何番目のプレイヤーかの添え字
     private int PlayerIndex = 0;
-    //
+    //プレイヤーの体力。
+    Image HpImag;
 
     public int index
     {
@@ -130,6 +111,26 @@ public abstract class PlayerBase : MonoBehaviour
 
     public void Start()
     {
+        playerInfo.SelectFit = playerInfo.MainWeaponNum[playerInfo.NowWeaponIndex];
+
+        GameObject Img = (GameObject)Instantiate(Resources.Load("Prefabs/HPGauge"), GameObject.Find("Canvas").transform);
+        HpImag = Img.transform.FindChild("HP").gameObject.GetComponent<Image>();
+       switch(PlayerIndex)
+        {
+            case 0:
+                Img.transform.localPosition = new Vector3(-289.5f, 35.0f, 0.0f);
+                break;
+            case 1:
+                Img.transform.localPosition = new Vector3(35.0f, 35.0f, 0.0f);
+                break;
+            case 2:
+                Img.transform.localPosition = new Vector3(-289.5f, -147.5f, 0.0f);
+                break;
+            case 3:
+                Img.transform.localPosition = new Vector3(35.0f, -147.5f, 0.0f);
+                break;
+        }
+
         //プレイヤーがどのチームに所属しているかチェック。
         tag = gameObject.tag;
         if (tag == "Red_Team_Player")
@@ -152,34 +153,31 @@ public abstract class PlayerBase : MonoBehaviour
         //検索してきたハンドガンからGunのコンポーネントを取得。
         gun = handgun.GetComponent<Gun>();
         //プレイヤーに設定された最大HPを現在のHPに設定。
-        playerInfo.hp = playerInfo.MaxHP;
+        playerInfo.HP = playerInfo.MaxHP;
         playerInfo.State = PLAYERSTATE.WAIT;
         GameObject came = gameObject.transform.FindChild("Main Camera").gameObject;
         camera = came.GetComponent<Camera>();
         TargetPos = transform.position;
         PlayerWeaponSet();
 
+
     }
 
     public void Update()
-    {
-       
+    {    
         TargetPos = transform.position;
         Move();
+        var KeyState = GamePad.GetState((GamePad.Index)PlayerIndex + 1, false);
         //待機状態なら。
         if (playerInfo.State == PLAYERSTATE.WAIT)
         {
             //var playerNo = GamePad.Index.One;
-            var KeyState = GamePad.GetState((GamePad.Index)PlayerIndex+1, false);
+            
             //マウスの右クリックが押されている間。
             //if (Input.GetMouseButton(1))
             //{
             //    Attack();
             //}
-            if (KeyState.RightShoulder)
-            {
-                Attack();
-            }
         }
         //何かしらを行っている状態。
         else
@@ -192,7 +190,32 @@ public abstract class PlayerBase : MonoBehaviour
             }
         }
 
+        //if (KeyState.RightShoulder)
+        //{
+        //    Attack();
+        //}
+
+        //if (KeyState.X)
+        //{
+        //    Reload();
+        //}
+
+        //落下死したら自陣地に復活。
+        if (TargetPos.y < -10)
+        {
+            transform.position = new Vector3(Random.Range(0.0f, Spawner.transform.localScale.x / 2.0f), 1.0f, Random.Range(0.0f, Spawner.transform.localScale.z / 2.0f)) + Spawner.transform.localPosition;
+        }
+
+        //体力が無くなったら自陣地に復活。
+        if (playerInfo.HP < 0)
+        {
+            transform.position = new Vector3(Random.Range(0.0f, Spawner.transform.localScale.x / 2.0f), 1.0f, Random.Range(0.0f, Spawner.transform.localScale.z / 2.0f)) + Spawner.transform.localPosition;
+            playerInfo.HP = playerInfo.MaxHP;
+        }
+
         WeaponChange();
+
+        HpImag.fillAmount = playerInfo.HP / playerInfo.MaxHP;
 
     }
 
@@ -200,7 +223,17 @@ public abstract class PlayerBase : MonoBehaviour
     {
         Interval = playerInfo.AttackInterval;
         playerInfo.State = PLAYERSTATE.ATTACK;
+        WeaponBase weapon;
+        weapon = (WeaponBase)playerInfo.SelectFit;
+        weapon.Attack();
         //音再生。
+    }
+
+    public virtual void Reload()
+    {
+        WeaponBase weapon;
+        weapon = (WeaponBase)playerInfo.SelectFit;
+        weapon.Reload();
     }
 
     public virtual void Move()
@@ -294,13 +327,21 @@ public abstract class PlayerBase : MonoBehaviour
     //プレイヤーのHPの増減処理。
     public void AddHp(float addnum)
     {
-        playerInfo.hp += addnum;
+        playerInfo.HP += addnum;
     }
 
     //アイテムを使ったHPの回復処理。
     public void ItemRecovery(float rate)
     {
-       playerInfo.hp += playerInfo.MaxHP * rate;
+        float Heal = playerInfo.MaxHP * rate;
+        if (playerInfo.MaxHP < playerInfo.HP + Heal)
+        {
+            playerInfo.HP = playerInfo.MaxHP;
+        }
+        else
+        {
+            playerInfo.HP += Heal;
+        }
     }
     public void WeaponChange()
     {

@@ -24,8 +24,6 @@ public abstract class WeaponBase : Fit
         NOTACTIVE
     };
 
-    public int idx = 0;
-
     //武器が鳴らす音たち
     [System.Serializable]
     public class WeaponSounds
@@ -53,6 +51,8 @@ public abstract class WeaponBase : Fit
     int Elapsed = 0;
     //ステートマシン
     public WEAPONSTATE State;
+    //コントローラーのインデックス。
+    public int idx = 0;
     //武器が鳴らす音たち
     public WeaponSounds Sounds;
     protected AudioSource Audio;
@@ -62,7 +62,7 @@ public abstract class WeaponBase : Fit
     {
         State = WEAPONSTATE.WAIT;
         Audio = gameObject.GetComponent<AudioSource>();
-        idx = transform.parent.GetComponent<NormalPlayer>().index;
+        
     }
 
     // Update is called once per frame
@@ -71,23 +71,17 @@ public abstract class WeaponBase : Fit
         //待機状態なら
         if (State == WEAPONSTATE.WAIT)
         {
-            var KeyState = GamePad.GetState((GamePad.Index)idx+1, false);
-            if(KeyState.RightShoulder)
+            ////ホントはプレイヤーでするとこだと思うんです！！！
+            idx = transform.parent.GetComponent<NormalPlayer>().index + 1;
+            var KeyState = GamePad.GetState((GamePad.Index)idx, false);
+            //攻撃。
+            if (KeyState.RightShoulder)
             {
                 Attack();
             }
-            if(KeyState.LeftShoulder)
-            {
-                Reload();
-            }
-            //ホントはプレイヤーでするとこだと思うんです！！！
-            //マウスの左クリックが押されている間
-            if (Input.GetMouseButton(0))
-            {
-                Attack();
-            }
-            //Rキーを押下したとき
-            if (Input.GetKeyDown(KeyCode.R))
+                
+           //リロード。
+            if(KeyState.X)
             {
                 Reload();
             }

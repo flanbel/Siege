@@ -14,7 +14,7 @@ public abstract class BulletBase : MonoBehaviour {
         //攻撃力()
         public float Power = 0.0f;
         //速度
-        public float Speed = 0.0f;
+        public float Speed = 1.0f;
         //進行方向
         public Vector3 Dir = Vector3.zero;
         //寿命
@@ -41,7 +41,7 @@ public abstract class BulletBase : MonoBehaviour {
 	// Update is called once per frame
 	public void Update () {
 
-        transform.localPosition += State.Dir;
+        transform.localPosition += (State.Dir * State.Speed)*Time.deltaTime;
         //寿命の経過時間増加
         State.Elapsed += Time.deltaTime;
         //寿命を過ぎたなら
