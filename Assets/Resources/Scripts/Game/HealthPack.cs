@@ -53,6 +53,7 @@ public class HealthPack : MonoBehaviour {
         {
             //回復させる
             col.GetComponent<PlayerBase>().ItemRecovery(HealRate / 100);
+            col.GetComponent<PlayerBase>().AddNowBullet(100);
 
             //一時的に消える 
             alive = false;
