@@ -29,9 +29,9 @@ public class LaserRifle : Gun
         //移動
         bullet.transform.localPosition = GunInfo.Muzzle.position;
         //設定
-        bullet.GetComponent<BulletBase>().SetState(Power, transform.TransformDirection(Vector3.forward), transform.rotation);
+        bullet.GetComponent<BulletBase>().SetState(Power, transform.forward, transform.rotation);
         //親子関係をつけて銃に弾を追従させる。
-        bullet.transform.SetParent(transform);
+        //bullet.transform.SetParent(transform);
         //プレイヤーのタグをみて決定
         if (transform.parent.tag == "Red_Team_Player")
         {

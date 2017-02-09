@@ -73,18 +73,18 @@ public abstract class WeaponBase : Fit
         {
             ////ホントはプレイヤーでするとこだと思うんです！！！
             idx = transform.parent.GetComponent<NormalPlayer>().index + 1;
-            var KeyState = GamePad.GetState((GamePad.Index)idx, false);
+            //var KeyState = GamePad.GetState((GamePad.Index)idx, false);
             //攻撃。
-            if (KeyState.RightShoulder)
-            {
-                Attack();
-            }
+           // if (KeyState.RightShoulder)
+           // {
+           //     Attack();
+           // }
                 
-           //リロード。
-            if(KeyState.X)
-            {
-                Reload();
-            }
+           ////リロード。
+           // if(KeyState.X)
+           // {
+           //     Reload();
+           // }
         }
         //何かしらを行っている状態
         else
@@ -103,8 +103,11 @@ public abstract class WeaponBase : Fit
     /// </summary>
     public virtual void Attack()
     {
-        Interval = AttackInterval;
-        State = WEAPONSTATE.ATTACK;
+        if (State == WEAPONSTATE.WAIT)
+        {
+            Interval = AttackInterval;
+            State = WEAPONSTATE.ATTACK;
+        }
     }
 
     /// <summary>
@@ -112,7 +115,10 @@ public abstract class WeaponBase : Fit
     /// </summary>
     public virtual void Reload()
     {
-        Interval = ReloadInterval;
-        State = WEAPONSTATE.RELOAD;
+        if (State == WEAPONSTATE.WAIT)
+        {
+            Interval = ReloadInterval;
+            State = WEAPONSTATE.RELOAD;
+        }
     }
 }
