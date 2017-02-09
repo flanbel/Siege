@@ -8,7 +8,7 @@ public class GameCamera : MonoBehaviour {
     public int peoplenum = 0;
 	// Use this for initialization
 	void Start () {
-        
+
 
         //プレイヤーコンポーネントから添え字取得
         Idx = transform.parent.GetComponent<NormalPlayer>().index + 1;

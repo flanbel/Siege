@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GamepadInput;
 
 //必須コンポーネント。
 [RequireComponent(typeof(AudioSource))]
@@ -16,6 +17,18 @@ public abstract class PlayerBase : MonoBehaviour
     CharacterController Characon;
     //カメラ。
     Camera camera;
+    //プレイヤーのステートマシン。
+    public enum PLAYERSTATE
+    {
+        //待機中。
+        WAIT = 0,
+        //攻撃中。
+        ATTACK,
+        //移動中。
+        MOVE,
+        //ダメージを受けた時。
+        DAMAGE,
+    };
 
     [System.Serializable]
     //プレイヤーの情報。
@@ -39,16 +52,10 @@ public abstract class PlayerBase : MonoBehaviour
         public float Power = 0.0f;
         //攻撃間隔(Fream数)。
         public int AttackInterval = 0;
-        //プレイヤーの現在の状態。
-        public PlayerState NowPlayerState = 0;
+        //ステートマシン
+        public PLAYERSTATE State = PLAYERSTATE.WAIT;
     }
     public PlayerInformation playerInfo;
-
-    public enum PlayerState
-    {
-        State=0,
-        Walk,
-    };
 
     GameObject Spawner;
     //選択した武器のインスタンスをまとめて格納。
@@ -99,21 +106,6 @@ public abstract class PlayerBase : MonoBehaviour
     public PlayerSounds PlayaerSounds;
     protected AudioSource Audio;
 
-    //プレイヤーのステートマシン。
-    public enum PLAYERSTATE
-    {
-        //待機中。
-        WAIT = 0,
-        //攻撃中。
-        ATTACK,
-        //移動中。
-        MOVE,
-        //ダメージを受けた時。
-        DAMAGE,
-    };
-    //ステートマシン
-    public PLAYERSTATE State;
-
     public void Start()
     {
         //リスポーン地点を取得。
@@ -129,7 +121,7 @@ public abstract class PlayerBase : MonoBehaviour
         gun = handgun.GetComponent<Gun>();
         //プレイヤーに設定された最大HPを現在のHPに設定。
         playerInfo.HP = playerInfo.MaxHP;
-        State = PLAYERSTATE.WAIT;
+        playerInfo.State = PLAYERSTATE.WAIT;
         GameObject came = gameObject.transform.FindChild("Main Camera").gameObject;
         camera = came.GetComponent<Camera>();
         TargetPos = transform.position;
@@ -143,11 +135,16 @@ public abstract class PlayerBase : MonoBehaviour
         TargetPos = transform.position;
         Move();
         //待機状態なら。
-        if (State == PLAYERSTATE.WAIT)
+        if (playerInfo.State == PLAYERSTATE.WAIT)
         {
-
+            //var playerNo = GamePad.Index.One;
+            var KeyState = GamePad.GetState((GamePad.Index)PlayerIndex+1, false);
             //マウスの右クリックが押されている間。
-            if (Input.GetMouseButton(1))
+            //if (Input.GetMouseButton(1))
+            //{
+            //    Attack();
+            //}
+            if (KeyState.RightShoulder)
             {
                 Attack();
             }
@@ -159,7 +156,7 @@ public abstract class PlayerBase : MonoBehaviour
             if (Interval <= Elapsed++)
             {
                 Interval = Elapsed = 0;
-                State = PLAYERSTATE.WAIT;
+                playerInfo.State = PLAYERSTATE.WAIT;
             }
         }
 
@@ -170,46 +167,48 @@ public abstract class PlayerBase : MonoBehaviour
     public virtual void Attack()
     {
         Interval = playerInfo.AttackInterval;
-        State = PLAYERSTATE.ATTACK;
+        playerInfo.State = PLAYERSTATE.ATTACK;
         //音再生。
     }
 
     public virtual void Move()
     {
+        //var playerNo = GamePad.Index.Any;
+        var KeyState = GamePad.GetState((GamePad.Index)PlayerIndex+1, false);
         //カメラから見たパッドの入力に変換。
-        Vector3 Dir = camera.transform.TransformDirection(Input.GetAxisRaw("Horizontal"), 0.0f, -Input.GetAxisRaw("Vertical"));
-        camera.transform.RotateAround(TargetPos, Vector3.up, Input.GetAxisRaw("Horizontal2"));
-        CameraAngleY = Input.GetAxisRaw("Vertical2");
-        if (-30 < camera.transform.rotation.y && camera.transform.rotation.y < 30)
-        {
-            camera.transform.Rotate(new Vector3(CameraAngleY, 0, 0));
-        }
+        Vector3 Dir = camera.transform.TransformDirection(KeyState.LeftStickAxis.x, 0.0f, KeyState.LeftStickAxis.y);
+        transform.RotateAround(TargetPos, Vector3.up, KeyState.rightStickAxis.x);
         
+        //CameraAngleY = KeyState.rightStickAxis.y;
+        if (-30 < transform.rotation.x && transform.rotation.x < 30)
+        {
+            transform.Rotate(-KeyState.rightStickAxis.y, 0.0f, 0.0f);
+        }
         //WASD機能。
         //カメラから見たキー入力に変更。
-        if (Input.GetKey(KeyCode.W))
-        {
-            Dir = camera.transform.TransformDirection(0.0f, 0.0f, 1.0f);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            Dir = camera.transform.TransformDirection(0.0f, 0.0f, -1.0f);
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            Dir = camera.transform.TransformDirection(-1.0f, 0.0f, 0.0f);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            Dir = camera.transform.TransformDirection(1.0f, 0.0f, 0.0f);
-        }
+        //if (Input.GetKey(KeyCode.W))
+        //{
+        //    Dir = camera.transform.TransformDirection(0.0f, 0.0f, 1.0f);
+        //}
+        //if (Input.GetKey(KeyCode.S))
+        //{
+        //    Dir = camera.transform.TransformDirection(0.0f, 0.0f, -1.0f);
+        //}
+        //if (Input.GetKey(KeyCode.A))
+        //{
+        //    Dir = camera.transform.TransformDirection(-1.0f, 0.0f, 0.0f);
+        //}
+        //if (Input.GetKey(KeyCode.D))
+        //{
+        //    Dir = camera.transform.TransformDirection(1.0f, 0.0f, 0.0f);
+        //}
 
         //カメラのyが邪魔なので0にする。
         Dir.y = 0.0f;
         Characon.Move(Dir * Time.deltaTime * playerInfo.MoveSpeed);
 
         //マウスで回転。
-        transform.localEulerAngles += new Vector3(-Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X")*1.2f);
+        //transform.localEulerAngles += new Vector3(-Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X")*1.2f);
 
         //重力を加算。
         AddGavity += Physics.gravity.y * Time.deltaTime;
@@ -226,13 +225,13 @@ public abstract class PlayerBase : MonoBehaviour
         if (!Jamp)
         {
             //スペースキーでジャンプ。
-            if (Input.GetKey(KeyCode.Space))
-            {
-                Jamp = true;
-            }
+            //if (Input.GetKey(KeyCode.Space))
+            //{
+            //    Jamp = true;
+            //}
 
             //XboxコントローラーのAボタン。
-            if(Input.GetKey("joystick button 0"))
+            if (KeyState.A)
             {
                 Jamp = true;
             }
@@ -244,7 +243,7 @@ public abstract class PlayerBase : MonoBehaviour
         }
 
         Characon.Move(new Vector3(0, AddGavity, 0) * Time.deltaTime);
-        State = PLAYERSTATE.MOVE;
+        playerInfo.State = PLAYERSTATE.MOVE;
     }
     //所持している銃の弾の数を増やす。
     public void AddNowBullet(int addnum)
@@ -268,7 +267,7 @@ public abstract class PlayerBase : MonoBehaviour
         //何か装備していたらホイールで武器切り替えをする。
         if (playerInfo.MainWeaponNum.Length > 1)
         {
-            MouseScrollValue = Input.GetAxis("Mouse ScrollWheel");
+           // MouseScrollValue = Input.GetAxis("Mouse ScrollWheel");
             //ホイールが手前に入力。
             //武器の配列の位置を一つ後ろに進める。
             if (MouseScrollValue < 0.0f)
@@ -293,8 +292,11 @@ public abstract class PlayerBase : MonoBehaviour
                 //切り替えが発生したので武器を設定。
                 playerInfo.SelectFit = playerInfo.MainWeaponNum[playerInfo.NowWeaponIndex];
             }
+
+
+            var KeyState = GamePad.GetState((GamePad.Index)PlayerIndex+1, false);
             //パッドでの武器切り替え。
-            if (Input.GetKey("joystick button 3"))
+            if (KeyState.Y)
             {
                 playerInfo.NowWeaponIndex = (playerInfo.NowWeaponIndex + 1) % playerInfo.MainWeaponNum.Length;
                 //切り替えが発生したので武器を設定。
