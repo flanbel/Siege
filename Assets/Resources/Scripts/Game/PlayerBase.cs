@@ -171,13 +171,7 @@ public abstract class PlayerBase : MonoBehaviour
         //待機状態なら。
         if (playerInfo.State == PLAYERSTATE.WAIT)
         {
-            //var playerNo = GamePad.Index.One;
-            
-            //マウスの右クリックが押されている間。
-            //if (Input.GetMouseButton(1))
-            //{
-            //    Attack();
-            //}
+          
         }
         //何かしらを行っている状態。
         else
@@ -189,16 +183,6 @@ public abstract class PlayerBase : MonoBehaviour
                 playerInfo.State = PLAYERSTATE.WAIT;
             }
         }
-
-        //if (KeyState.RightShoulder)
-        //{
-        //    Attack();
-        //}
-
-        //if (KeyState.X)
-        //{
-        //    Reload();
-        //}
 
         //落下死したら自陣地に復活。
         if (TargetPos.y < -10)
