@@ -62,7 +62,7 @@ public abstract class PlayerBase : MonoBehaviour
     //リスポーン地点。
     GameObject Spawner;
     //選択した武器のインスタンスをまとめて格納。
-    public GameObject[] child;
+    public Fit[] child;
     //マウスのホイールの値を格納。
     float MouseScrollValue;
     //設定されたインターバル。
@@ -82,6 +82,8 @@ public abstract class PlayerBase : MonoBehaviour
     private int PlayerIndex = 0;
     //プレイヤーの体力。
     Image HpImag;
+
+    bool beforeY = false;
 
     public int index
     {
@@ -111,25 +113,7 @@ public abstract class PlayerBase : MonoBehaviour
 
     public void Awake()
     {
-        playerInfo.SelectFit = playerInfo.MainWeaponNum[playerInfo.NowWeaponIndex];
-
-        GameObject Img = (GameObject)Instantiate(Resources.Load("Prefabs/HPGauge"), GameObject.Find("Canvas").transform);
-        HpImag = Img.transform.FindChild("HP").gameObject.GetComponent<Image>();
-       switch(PlayerIndex)
-        {
-            case 0:
-                Img.transform.localPosition = new Vector3(-289.5f, 35.0f, 0.0f);
-                break;
-            case 1:
-                Img.transform.localPosition = new Vector3(35.0f, 35.0f, 0.0f);
-                break;
-            case 2:
-                Img.transform.localPosition = new Vector3(-289.5f, -147.5f, 0.0f);
-                break;
-            case 3:
-                Img.transform.localPosition = new Vector3(35.0f, -147.5f, 0.0f);
-                break;
-        }
+        
 
         //プレイヤーがどのチームに所属しているかチェック。
         tag = gameObject.tag;
@@ -156,10 +140,30 @@ public abstract class PlayerBase : MonoBehaviour
         camera = came.GetComponent<Camera>();
         TargetPos = transform.position;
         PlayerWeaponSet();
-
-
+        playerInfo.SelectFit = child[playerInfo.NowWeaponIndex];
+        playerInfo.SelectFit.gameObject.SetActive(true);
     }
 
+    void Start()
+    {
+        GameObject Img = (GameObject)Instantiate(Resources.Load("Prefabs/HPGauge"), GameObject.Find("Canvas").transform);
+        HpImag = Img.transform.FindChild("HP").gameObject.GetComponent<Image>();
+        switch (PlayerIndex)
+        {
+            case 0:
+                Img.transform.localPosition = new Vector3(-289.5f, 35.0f, 0.0f);
+                break;
+            case 1:
+                Img.transform.localPosition = new Vector3(35.0f, 35.0f, 0.0f);
+                break;
+            case 2:
+                Img.transform.localPosition = new Vector3(-289.5f, -147.5f, 0.0f);
+                break;
+            case 3:
+                Img.transform.localPosition = new Vector3(35.0f, -147.5f, 0.0f);
+                break;
+        }
+    }
 
     public void Update()
     {    
@@ -169,7 +173,13 @@ public abstract class PlayerBase : MonoBehaviour
         //待機状態なら。
         if (playerInfo.State == PLAYERSTATE.WAIT)
         {
-          
+            //var playerNo = GamePad.Index.One;
+            
+            //マウスの右クリックが押されている間。
+            //if (Input.GetMouseButton(1))
+            //{
+            //    Attack();
+            //}
         }
         //何かしらを行っている状態。
         else
@@ -180,6 +190,16 @@ public abstract class PlayerBase : MonoBehaviour
                 Interval = Elapsed = 0;
                 playerInfo.State = PLAYERSTATE.WAIT;
             }
+        }
+
+        if (KeyState.RightShoulder)
+        {
+            Attack();
+        }
+
+        if (KeyState.X)
+        {
+            Reload();
         }
 
         //落下死したら自陣地に復活。
@@ -220,23 +240,23 @@ public abstract class PlayerBase : MonoBehaviour
 
     public virtual void Move()
     {
+        //var playerNo = GamePad.Index.Any;
         var KeyState = GamePad.GetState((GamePad.Index)PlayerIndex+1, false);
         //カメラから見たパッドの入力に変換。
         Vector3 Dir = camera.transform.TransformDirection(KeyState.LeftStickAxis.x, 0.0f, KeyState.LeftStickAxis.y);
-
-        Quaternion oldRot = transform.localRotation;
         transform.RotateAround(TargetPos, Vector3.up, KeyState.rightStickAxis.x);
-        transform.Rotate(-KeyState.rightStickAxis.y, 0.0f, 0.0f);
-        float t = Mathf.Sqrt(transform.forward.z * transform.forward.z + transform.forward.x * transform.forward.x);
-        float angle = Mathf.Rad2Deg * Mathf.Atan2( transform.forward.y, t);
 
-        if (angle < -50 ||
-            angle > 50)
+        float angle = transform.eulerAngles.x + -KeyState.rightStickAxis.y;
+        //if ((0 < angle && angle < 40) || (angle < 0 && angle < -330))
+        //{
+        //    transform.Rotate(-KeyState.rightStickAxis.y, 0.0f, 0.0f);
+        //}
+
+        if(Mathf.Abs(angle)>40&&
+            Mathf.Abs(angle)<360-30)
         {
-            transform.localRotation = oldRot;
+            transform.Rotate(-KeyState.rightStickAxis.y, 0.0f, 0.0f);
         }
-      
-
         //WASD機能。
         //カメラから見たキー入力に変更。
         //if (Input.GetKey(KeyCode.W))
@@ -328,58 +348,65 @@ public abstract class PlayerBase : MonoBehaviour
     public void WeaponChange()
     {
         //何か装備していたらホイールで武器切り替えをする。
-        if (playerInfo.MainWeaponNum.Length > 1)
+        if (child.Length > 1)
         {
            // MouseScrollValue = Input.GetAxis("Mouse ScrollWheel");
             //ホイールが手前に入力。
             //武器の配列の位置を一つ後ろに進める。
-            if (MouseScrollValue < 0.0f)
-            {
-                playerInfo.NowWeaponIndex = (playerInfo.NowWeaponIndex + 1) % playerInfo.MainWeaponNum.Length;
-                //切り替えが発生したので武器を設定。
-                playerInfo.SelectFit = playerInfo.MainWeaponNum[playerInfo.NowWeaponIndex];
-            }
-            //ホイールが奥に入力。
-            //武器の配列の位置を一つ前に進める。
-            if (MouseScrollValue > 0.0f)
-            {
-                //配列の添え字が0なら一番最後の添え字にジャンプ。
-                if (playerInfo.NowWeaponIndex == 0)
-                {
-                    playerInfo.NowWeaponIndex = playerInfo.MainWeaponNum.Length - 1;
-                }
-                else
-                {
-                    playerInfo.NowWeaponIndex--;
-                }
-                //切り替えが発生したので武器を設定。
-                playerInfo.SelectFit = playerInfo.MainWeaponNum[playerInfo.NowWeaponIndex];
-            }
+            //if (MouseScrollValue < 0.0f)
+            //{
+            //    playerInfo.NowWeaponIndex = (playerInfo.NowWeaponIndex + 1) % child.Length;
+            //    //切り替えが発生したので武器を設定。
+            //    playerInfo.SelectFit = child[playerInfo.NowWeaponIndex];
+            //}
+            ////ホイールが奥に入力。
+            ////武器の配列の位置を一つ前に進める。
+            //if (MouseScrollValue > 0.0f)
+            //{
+            //    //配列の添え字が0なら一番最後の添え字にジャンプ。
+            //    if (playerInfo.NowWeaponIndex == 0)
+            //    {
+            //        playerInfo.NowWeaponIndex = child.Length - 1;
+            //    }
+            //    else
+            //    {
+            //        playerInfo.NowWeaponIndex--;
+            //    }
+            //    //切り替えが発生したので武器を設定。
+            //    playerInfo.SelectFit = child[playerInfo.NowWeaponIndex];
+            //}
 
 
             var KeyState = GamePad.GetState((GamePad.Index)PlayerIndex+1, false);
             //パッドでの武器切り替え。
-            if (KeyState.Y)
+            if (KeyState.Y && beforeY == false)
             {
-                playerInfo.NowWeaponIndex = (playerInfo.NowWeaponIndex + 1) % playerInfo.MainWeaponNum.Length;
+                playerInfo.NowWeaponIndex = (playerInfo.NowWeaponIndex + 1) % child.Length;
+                playerInfo.SelectFit.gameObject.SetActive(false);
                 //切り替えが発生したので武器を設定。
-                playerInfo.SelectFit = playerInfo.MainWeaponNum[playerInfo.NowWeaponIndex];
+                playerInfo.SelectFit = child[playerInfo.NowWeaponIndex];
+                playerInfo.SelectFit.gameObject.SetActive(true);
             }
+            beforeY = KeyState.Y;
         }
     }
     //生成した武器をプレイヤーの子にする処理。
     public void PlayerWeaponSet()
     {
-        child = new GameObject[playerInfo.MainWeaponNum.Length];
+        child = new Fit[playerInfo.MainWeaponNum.Length];
         //child = Resources.LoadAll<Fit>("Prafabs/Fit/Weapon");
         //プレイヤーが所持している武器からインスタンスを生成。
         for (int i = 0; i < playerInfo.MainWeaponNum.Length; i++)
         {
-            if (child[i] == null)
+            if (playerInfo.MainWeaponNum[i] == null)
                 continue;
-            child[i] = (GameObject)Instantiate(playerInfo.MainWeaponNum[i].gameObject, Vector3.zero, Quaternion.identity);
-            child[i].transform.SetParent(transform);
-            child[i].transform.localPosition = new Vector3(0.57f, 0.0f, 0.81f);
+            //生成
+            GameObject obj = (GameObject)Instantiate(playerInfo.MainWeaponNum[i].gameObject, Vector3.zero, Quaternion.identity);
+            obj.transform.SetParent(transform);
+            obj.transform.localPosition = new Vector3(0.57f, 0.0f, 0.81f);
+            //全て非アクティブに
+            obj.SetActive(false);
+            child[i] = obj.GetComponent<Fit>();
         }
     }
 
