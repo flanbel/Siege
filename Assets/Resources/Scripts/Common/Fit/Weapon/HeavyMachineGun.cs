@@ -71,6 +71,17 @@ public class HeavyMachineGun : Gun
                 dir.x += Random.Range(-GunInfo.Spread.x, GunInfo.Spread.x);
                 dir.y += Random.Range(-GunInfo.Spread.y, GunInfo.Spread.y);
                 bullet.GetComponent<BulletBase>().SetState(Power, dir, transform.rotation);
+                //プレイヤーのタグをみて決定
+                if (transform.parent.tag == "Red_Team_Player")
+                {
+                    //赤チーム
+                    bullet.tag = "Red_Team";
+                }
+                else if (transform.parent.tag == "Blue_Team_Player")
+                {
+                    //青チーム
+                    bullet.tag = "Blue_Team";
+                }
             }
         }
     }

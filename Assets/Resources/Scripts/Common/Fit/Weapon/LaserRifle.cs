@@ -32,5 +32,16 @@ public class LaserRifle : Gun
         bullet.GetComponent<BulletBase>().SetState(Power, transform.TransformDirection(Vector3.forward), transform.rotation);
         //親子関係をつけて銃に弾を追従させる。
         bullet.transform.SetParent(transform);
+        //プレイヤーのタグをみて決定
+        if (transform.parent.tag == "Red_Team_Player")
+        {
+            //赤チーム
+            bullet.tag = "Red_Team";
+        }
+        else if (transform.parent.tag == "Blue_Team_Player")
+        {
+            //青チーム
+            bullet.tag = "Blue_Team";
+        }
     }
 }
