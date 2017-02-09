@@ -34,8 +34,29 @@ public abstract class PlayerBase : MonoBehaviour
     //プレイヤーの情報。
     public class PlayerInformation
     {
+        [SerializeField]
         //キャラクターの体力。
-        public float HP = 0.0f;
+        private float HP = 0.0f;
+        public float hp
+        {
+            set
+            {
+                if(MaxHP > HP + value)
+                {
+                    HP += value;
+                }
+                //HPがMax値を超えるのでMax値にする。
+                else
+                {
+                    HP = MaxHP;
+                }
+            }
+
+            get
+            {
+                return HP;
+            }
+        }
         //キャラクターの体力の最大値。
         public float MaxHP = 0.0f;
         //キャラクターの移動速度。
@@ -58,6 +79,7 @@ public abstract class PlayerBase : MonoBehaviour
     }
     public PlayerInformation playerInfo;
 
+    //リスポーン地点。
     GameObject Spawner;
     //選択した武器のインスタンスをまとめて格納。
     public GameObject[] child;
@@ -78,6 +100,7 @@ public abstract class PlayerBase : MonoBehaviour
     Vector3 TargetPos;
     //何番目のプレイヤーかの添え字
     private int PlayerIndex = 0;
+    //
 
     public int index
     {
@@ -129,7 +152,7 @@ public abstract class PlayerBase : MonoBehaviour
         //検索してきたハンドガンからGunのコンポーネントを取得。
         gun = handgun.GetComponent<Gun>();
         //プレイヤーに設定された最大HPを現在のHPに設定。
-        playerInfo.HP = playerInfo.MaxHP;
+        playerInfo.hp = playerInfo.MaxHP;
         playerInfo.State = PLAYERSTATE.WAIT;
         GameObject came = gameObject.transform.FindChild("Main Camera").gameObject;
         camera = came.GetComponent<Camera>();
@@ -271,13 +294,13 @@ public abstract class PlayerBase : MonoBehaviour
     //プレイヤーのHPの増減処理。
     public void AddHp(float addnum)
     {
-        playerInfo.HP += addnum;
+        playerInfo.hp += addnum;
     }
 
     //アイテムを使ったHPの回復処理。
     public void ItemRecovery(float rate)
     {
-       playerInfo.HP += playerInfo.MaxHP * rate;
+       playerInfo.hp += playerInfo.MaxHP * rate;
     }
     public void WeaponChange()
     {
@@ -334,4 +357,34 @@ public abstract class PlayerBase : MonoBehaviour
             child[i].transform.localPosition = new Vector3(0.57f, 0.0f, 0.81f);
         }
     }
+
+    public void  OnCollisionEnter(Collision coll)
+    {
+        //自分が赤チームで飛んできた弾のタグが青ならダメージを食らう。
+        if (tag == "Blue_Team_Player" && coll.gameObject.tag == "Red_Team")
+        {
+            AddHp(-10);
+        }
+        //自分が青チームで飛んできた弾のタグが赤ならダメージを食らう。
+        else if (tag == "Red_Team_Player" && coll.gameObject.tag == "Blue_Team")
+        {
+            AddHp(-10);
+        }
+
+    }
+
+    public void OnTriggerEnter(Collider coll)
+    {
+        //自分が赤チームで飛んできた弾のタグが青ならダメージを食らう。
+        if (tag == "Blue_Team_Player" && coll.gameObject.tag == "Red_Team")
+        {
+            AddHp(-10);
+        }
+        //自分が青チームで飛んできた弾のタグが赤ならダメージを食らう。
+        else if (tag == "Red_Team_Player" && coll.gameObject.tag == "Blue_Team")
+        {
+            AddHp(-10);
+        }
+    }
+
 }
