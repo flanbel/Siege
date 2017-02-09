@@ -29,46 +29,52 @@ public class GameRule : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (RmitTime > 0.0f)
+        //終了してない
+        if (!GameSet)
         {
-            //カウントダウン
-            RmitTime -= Time.deltaTime;
-            //分
-            string time = ((int)RmitTime / 60).ToString();
-            time += ':';
-            //秒
-            if (((int)RmitTime % 60) < 10)
+            //制限時間を過ぎてない
+            if (RmitTime > 0.0f)
             {
-                //一けたなら0を付け足す
-                time += '0' + ((int)RmitTime % 60).ToString();
+                //カウントダウン
+                RmitTime -= Time.deltaTime;
+                //分
+                string time = ((int)RmitTime / 60).ToString();
+                time += ':';
+                //秒
+                if (((int)RmitTime % 60) < 10)
+                {
+                    //一けたなら0を付け足す
+                    time += '0' + ((int)RmitTime % 60).ToString();
+                }
+                else
+                {
+                    time += ((int)RmitTime % 60).ToString();
+                }
+                DisplayTimeText.text = time;
             }
+            //延長戦
             else
             {
-                time += ((int)RmitTime % 60).ToString();
+                //まだ奪取中なら延長戦
+                if (ControlPoint.rate > 0.0f)
+                {
+                    DisplayTimeText.text = "延長戦！！";
+                    DisplayTimeText.color = Color.red;
+                }
+                else
+                {
+                    //ゲーム終了
+                    Gamesset.SetActive(true);
+                    GameSet = true;
+                }
             }
-            DisplayTimeText.text = time;
-        }
-        else
-        {
-            //まだ奪取中なら延長戦
-            if (ControlPoint.rate > 0.0f)
-            {
-                DisplayTimeText.text = "延長戦！！";
-                DisplayTimeText.color = Color.red;
-            }
-            else
+            //奪取したなら
+            if (ControlPoint.rate >= 100.0f)
             {
                 //ゲーム終了
                 Gamesset.SetActive(true);
                 GameSet = true;
             }
-        }
-        //奪取したなら
-        if(ControlPoint.rate >= 100.0f)
-        {
-            //ゲーム終了
-            Gamesset.SetActive(true);
-            GameSet = true;
         }
     }
 }
