@@ -15,7 +15,7 @@ public abstract class PlayerBase : MonoBehaviour
     //キャラクターコントローラー。
     CharacterController Characon;
     //カメラ。
-    new Camera camera;
+    Camera camera;
 
     [System.Serializable]
     //プレイヤーの情報。
@@ -130,9 +130,9 @@ public abstract class PlayerBase : MonoBehaviour
         //プレイヤーに設定された最大HPを現在のHPに設定。
         playerInfo.HP = playerInfo.MaxHP;
         State = PLAYERSTATE.WAIT;
-        camera = Camera.main;
+        GameObject came = gameObject.transform.FindChild("Main Camera").gameObject;
+        camera = came.GetComponent<Camera>();
         TargetPos = transform.position;
-
         PlayerWeaponSet();
 
     }
@@ -178,13 +178,13 @@ public abstract class PlayerBase : MonoBehaviour
     {
         //カメラから見たパッドの入力に変換。
         Vector3 Dir = camera.transform.TransformDirection(Input.GetAxisRaw("Horizontal"), 0.0f, -Input.GetAxisRaw("Vertical"));
-        camera.transform.RotateAround(TargetPos, Vector3.up, Input.GetAxisRaw("Horizontal1"));
-        CameraAngleY = Input.GetAxisRaw("Vertical1");
+        camera.transform.RotateAround(TargetPos, Vector3.up, Input.GetAxisRaw("Horizontal2"));
+        CameraAngleY = Input.GetAxisRaw("Vertical2");
         if (-30 < camera.transform.rotation.y && camera.transform.rotation.y < 30)
         {
             camera.transform.Rotate(new Vector3(CameraAngleY, 0, 0));
         }
-
+        
         //WASD機能。
         //カメラから見たキー入力に変更。
         if (Input.GetKey(KeyCode.W))
