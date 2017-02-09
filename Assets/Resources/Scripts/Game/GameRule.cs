@@ -76,5 +76,9 @@ public class GameRule : MonoBehaviour {
                 GameSet = true;
             }
         }
+        else
+        {
+
+        }
     }
 }

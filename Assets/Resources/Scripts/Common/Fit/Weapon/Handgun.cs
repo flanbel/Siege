@@ -28,5 +28,18 @@ public class Handgun : Gun {
         bullet.transform.localPosition = GunInfo.Muzzle.position;
         //設定
         bullet.GetComponent<BulletBase>().SetState(Power, transform.forward,transform.rotation);
+        //プレイヤーのタグをみて決定
+        if(transform.parent.tag == "Red_Team_Player")
+        {
+            //赤チーム
+            bullet.tag = "Red_Team";
+        }
+        else if(transform.parent.tag == "Blue_Team_Player")
+        {
+            //青チーム
+            bullet.tag = "Blue_Team";
+        }
+
+        
     }
 }
