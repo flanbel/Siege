@@ -160,6 +160,7 @@ public abstract class PlayerBase : MonoBehaviour
 
     }
 
+
     public void Update()
     {    
         TargetPos = transform.position;
@@ -219,23 +220,23 @@ public abstract class PlayerBase : MonoBehaviour
 
     public virtual void Move()
     {
-        //var playerNo = GamePad.Index.Any;
         var KeyState = GamePad.GetState((GamePad.Index)PlayerIndex+1, false);
         //カメラから見たパッドの入力に変換。
         Vector3 Dir = camera.transform.TransformDirection(KeyState.LeftStickAxis.x, 0.0f, KeyState.LeftStickAxis.y);
+
+        Quaternion oldRot = transform.localRotation;
         transform.RotateAround(TargetPos, Vector3.up, KeyState.rightStickAxis.x);
+        transform.Rotate(-KeyState.rightStickAxis.y, 0.0f, 0.0f);
+        float t = Mathf.Sqrt(transform.forward.z * transform.forward.z + transform.forward.x * transform.forward.x);
+        float angle = Mathf.Rad2Deg * Mathf.Atan2( transform.forward.y, t);
 
-        float angle = transform.eulerAngles.x + -KeyState.rightStickAxis.y;
-        //if ((0 < angle && angle < 40) || (angle < 0 && angle < -330))
-        //{
-        //    transform.Rotate(-KeyState.rightStickAxis.y, 0.0f, 0.0f);
-        //}
-
-        if(Mathf.Abs(angle)>40&&
-            Mathf.Abs(angle)<360-30)
+        if (angle < -50 ||
+            angle > 50)
         {
-            transform.Rotate(-KeyState.rightStickAxis.y, 0.0f, 0.0f);
+            transform.localRotation = oldRot;
         }
+      
+
         //WASD機能。
         //カメラから見たキー入力に変更。
         //if (Input.GetKey(KeyCode.W))
