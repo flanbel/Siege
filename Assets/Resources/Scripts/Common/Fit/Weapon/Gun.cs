@@ -116,9 +116,10 @@ public abstract class Gun : WeaponBase
     /// 弾を補充
     /// </summary>
     /// <param name="addnum"></param>
-    public void AddBullets(int addnum)
+    public void AddBullets(float addnum)
     {
-        GunInfo.NowBulletsNum += addnum;
+        int add = Mathf.RoundToInt((float)GunInfo.MaxBulletsNum * addnum);
+        GunInfo.NowBulletsNum = Mathf.Min(GunInfo.MaxBulletsNum, GunInfo.NowBulletsNum + add);
     }
 
     protected abstract void Shot();
