@@ -82,6 +82,8 @@ public abstract class PlayerBase : MonoBehaviour
     private int PlayerIndex = 0;
     //プレイヤーの体力。
     Image HpImag;
+    //Anim
+    Animation PlayerAnim;
 
     bool beforeY = false;
 
@@ -169,18 +171,11 @@ public abstract class PlayerBase : MonoBehaviour
     public void Update()
     {    
         TargetPos = transform.position;
-        Move();
-        var KeyState = GamePad.GetState((GamePad.Index)PlayerIndex + 1, false);
+
         //待機状態なら。
         if (playerInfo.State == PLAYERSTATE.WAIT)
         {
-            //var playerNo = GamePad.Index.One;
             
-            //マウスの右クリックが押されている間。
-            //if (Input.GetMouseButton(1))
-            //{
-            //    Attack();
-            //}
         }
         //何かしらを行っている状態。
         else
@@ -193,6 +188,9 @@ public abstract class PlayerBase : MonoBehaviour
             }
         }
 
+        Move();
+
+        var KeyState = GamePad.GetState((GamePad.Index)PlayerIndex + 1, false);
         if (KeyState.RightShoulder)
         {
             Attack();
@@ -202,6 +200,8 @@ public abstract class PlayerBase : MonoBehaviour
         {
             Reload();
         }
+
+       
 
         //落下死したら自陣地に復活。
         if (TargetPos.y < -10)
@@ -298,12 +298,6 @@ public abstract class PlayerBase : MonoBehaviour
 
         if (!Jamp)
         {
-            //スペースキーでジャンプ。
-            //if (Input.GetKey(KeyCode.Space))
-            //{
-            //    Jamp = true;
-            //}
-
             //XboxコントローラーのAボタン。
             if (KeyState.A)
             {
