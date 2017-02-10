@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 //ゲームのルールを決める
 public class GameRule : MonoBehaviour {
 
@@ -16,6 +17,8 @@ public class GameRule : MonoBehaviour {
     //ゲームセットのテキストオブジェクト
     public GameObject Gamesset;
     public bool GameSet = false;
+    float t = 0.0f;
+
 
     // Use this for initialization
     void Start () {
@@ -65,6 +68,8 @@ public class GameRule : MonoBehaviour {
                 {
                     //ゲーム終了
                     Gamesset.SetActive(true);
+                    Gamesset.gameObject.GetComponent<Text>().text = "RED WIN";
+                    Gamesset.gameObject.GetComponent<Text>().color = Color.red;
                     GameSet = true;
                 }
             }
@@ -73,12 +78,16 @@ public class GameRule : MonoBehaviour {
             {
                 //ゲーム終了
                 Gamesset.SetActive(true);
+                Gamesset.gameObject.GetComponent<Text>().text = "BLUE WIN";
+                Gamesset.gameObject.GetComponent<Text>().color = Color.blue;
                 GameSet = true;
             }
         }
         else
         {
-
+            t += Time.deltaTime;
+            if(t >  3)
+            { SceneManager.LoadScene("Menu"); }
         }
     }
 }
