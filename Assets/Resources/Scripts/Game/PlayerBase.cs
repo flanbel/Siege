@@ -113,22 +113,7 @@ public abstract class PlayerBase : MonoBehaviour
 
     public void Awake()
     {
-        
-
-        //プレイヤーがどのチームに所属しているかチェック。
-        tag = gameObject.tag;
-        if (tag == "Red_Team_Player")
-        {
-            //赤チームのリスポーン地点を取得。
-            Spawner = GameObject.Find("Red_Spawner");
-        }
-        else if (tag == "Blue_Team_Player")
-        {
-            //青チームのリスポーン地点を取得。
-            Spawner = GameObject.Find("Blue_Spawner");
-        }
-        //リスポーン地点内にプレイヤーを配置。
-        this.transform.position = new Vector3(Random.Range(0.0f, Spawner.transform.localScale.x / 2.0f), 1.0f, Random.Range(0.0f, Spawner.transform.localScale.z / 2.0f)) + Spawner.transform.localPosition;
+       
         //キャラクターコントローラーのコンポーネントを取得。
         Characon = this.GetComponent<CharacterController>();
         Audio = gameObject.GetComponent<AudioSource>();
@@ -146,6 +131,22 @@ public abstract class PlayerBase : MonoBehaviour
 
     void Start()
     {
+        //プレイヤーがどのチームに所属しているかチェック。
+        tag = gameObject.tag;
+        if (tag == "Red_Team_Player")
+        {
+            //赤チームのリスポーン地点を取得。
+            Spawner = GameObject.Find("Red_Spawner");
+        }
+        else if (tag == "Blue_Team_Player")
+        {
+            //青チームのリスポーン地点を取得。
+            Spawner = GameObject.Find("Blue_Spawner");
+        }
+
+        //リスポーン地点内にプレイヤーを配置。
+        this.transform.position = new Vector3(Random.Range(0.0f, Spawner.transform.localScale.x / 2.0f), 1.0f, Random.Range(0.0f, Spawner.transform.localScale.z / 2.0f)) + Spawner.transform.localPosition;
+
         GameObject Img = (GameObject)Instantiate(Resources.Load("Prefabs/HPGauge"), GameObject.Find("Canvas").transform);
         HpImag = Img.transform.FindChild("HP").gameObject.GetComponent<Image>();
         switch (PlayerIndex)
@@ -244,18 +245,16 @@ public abstract class PlayerBase : MonoBehaviour
         var KeyState = GamePad.GetState((GamePad.Index)PlayerIndex+1, false);
         //カメラから見たパッドの入力に変換。
         Vector3 Dir = camera.transform.TransformDirection(KeyState.LeftStickAxis.x, 0.0f, KeyState.LeftStickAxis.y);
+        Quaternion oldRot = transform.localRotation;
         transform.RotateAround(TargetPos, Vector3.up, KeyState.rightStickAxis.x);
+        transform.Rotate(-KeyState.rightStickAxis.y, 0.0f, 0.0f);
+        float t = Mathf.Sqrt(transform.forward.z * transform.forward.z + transform.forward.x * transform.forward.x);
+        float angle = Mathf.Rad2Deg * Mathf.Atan2(transform.forward.y, t);
 
-        float angle = transform.eulerAngles.x + -KeyState.rightStickAxis.y;
-        //if ((0 < angle && angle < 40) || (angle < 0 && angle < -330))
-        //{
-        //    transform.Rotate(-KeyState.rightStickAxis.y, 0.0f, 0.0f);
-        //}
-
-        if(Mathf.Abs(angle)>40&&
-            Mathf.Abs(angle)<360-30)
+        if (angle < -50 ||
+            angle > 50)
         {
-            transform.Rotate(-KeyState.rightStickAxis.y, 0.0f, 0.0f);
+            transform.localRotation = oldRot;
         }
         //WASD機能。
         //カメラから見たキー入力に変更。
@@ -323,7 +322,9 @@ public abstract class PlayerBase : MonoBehaviour
     //所持している銃の弾の数を増やす。
     public void AddNowBullet(int addnum)
     {
-        gun.AddBullets(addnum);
+        Gun weapon;
+        weapon = (Gun)playerInfo.SelectFit;
+        weapon.AddBullets(addnum);
     }
   
     //プレイヤーのHPの増減処理。
