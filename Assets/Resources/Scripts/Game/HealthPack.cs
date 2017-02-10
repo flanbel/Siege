@@ -25,6 +25,7 @@ public class HealthPack : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         renderer.enabled = alive;
+        if(Particle)
         Particle.SetActive(alive);
         //存在するなら
         if (alive)
@@ -52,8 +53,14 @@ public class HealthPack : MonoBehaviour {
             col.gameObject.tag == "Blue_Team_Player")
         {
             //回復させる
-            col.GetComponent<PlayerBase>().ItemRecovery(HealRate / 100);
-            col.GetComponent<PlayerBase>().AddNowBullet(100);
+            if (gameObject.tag == "HealthPack")
+            {
+                col.GetComponent<PlayerBase>().ItemRecovery(HealRate / 100);
+            }
+            else if (gameObject.tag == "AmmrPack")
+            {
+                col.GetComponent<PlayerBase>().AddNowBullet(1);
+            }
 
             //一時的に消える 
             alive = false;
