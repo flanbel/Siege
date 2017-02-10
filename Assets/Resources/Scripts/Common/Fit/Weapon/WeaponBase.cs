@@ -62,7 +62,7 @@ public abstract class WeaponBase : Fit
     {
         State = WEAPONSTATE.WAIT;
         Audio = gameObject.GetComponent<AudioSource>();
-        
+
     }
 
     // Update is called once per frame
@@ -75,16 +75,16 @@ public abstract class WeaponBase : Fit
             idx = transform.parent.GetComponent<NormalPlayer>().index + 1;
             //var KeyState = GamePad.GetState((GamePad.Index)idx, false);
             //攻撃。
-           // if (KeyState.RightShoulder)
-           // {
-           //     Attack();
-           // }
-                
-           ////リロード。
-           // if(KeyState.X)
-           // {
-           //     Reload();
-           // }
+            // if (KeyState.RightShoulder)
+            // {
+            //     Attack();
+            // }
+
+            ////リロード。
+            // if(KeyState.X)
+            // {
+            //     Reload();
+            // }
         }
         //何かしらを行っている状態
         else
@@ -103,11 +103,10 @@ public abstract class WeaponBase : Fit
     /// </summary>
     public virtual void Attack()
     {
-        if (State == WEAPONSTATE.WAIT)
-        {
-            Interval = AttackInterval;
-            State = WEAPONSTATE.ATTACK;
-        }
+
+        Interval = AttackInterval;
+        State = WEAPONSTATE.ATTACK;
+
     }
 
     /// <summary>
@@ -115,10 +114,8 @@ public abstract class WeaponBase : Fit
     /// </summary>
     public virtual void Reload()
     {
-        if (State == WEAPONSTATE.WAIT)
-        {
-            Interval = ReloadInterval;
-            State = WEAPONSTATE.RELOAD;
-        }
+
+        Interval = ReloadInterval;
+        State = WEAPONSTATE.RELOAD;
     }
 }

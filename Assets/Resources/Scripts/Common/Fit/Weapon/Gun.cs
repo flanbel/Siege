@@ -52,9 +52,12 @@ public abstract class Gun : WeaponBase
         if (GunInfo.NowMagazine > 0)
         {
             //ステート切り替え
-            base.Attack();
+            if (State == WEAPONSTATE.WAIT)
+            {
+                base.Attack();
 
-            Shot();
+                Shot();
+            }
         }
         else
         {
@@ -79,24 +82,27 @@ public abstract class Gun : WeaponBase
         if (GunInfo.NowBulletsNum > 0 &&
             GunInfo.NowMagazine != GunInfo.MaxMagazine)
         {
-            base.Reload();
-
-            Audio.PlayOneShot(Sounds.ReloadSound);
-            //補填数
-            int Compensation = GunInfo.MaxMagazine - GunInfo.NowMagazine;
-
-            //補填数分はある
-            if (GunInfo.NowBulletsNum >= Compensation)
+            if (State == WEAPONSTATE.WAIT)
             {
-                //補填
-                GunInfo.NowMagazine += Compensation;
-                GunInfo.NowBulletsNum -= Compensation;
-            }
-            //足りない
-            else
-            {
-                GunInfo.NowMagazine += GunInfo.NowBulletsNum;
-                GunInfo.NowBulletsNum = 0;
+                base.Reload();
+
+                Audio.PlayOneShot(Sounds.ReloadSound);
+                //補填数
+                int Compensation = GunInfo.MaxMagazine - GunInfo.NowMagazine;
+
+                //補填数分はある
+                if (GunInfo.NowBulletsNum >= Compensation)
+                {
+                    //補填
+                    GunInfo.NowMagazine += Compensation;
+                    GunInfo.NowBulletsNum -= Compensation;
+                }
+                //足りない
+                else
+                {
+                    GunInfo.NowMagazine += GunInfo.NowBulletsNum;
+                    GunInfo.NowBulletsNum = 0;
+                }
             }
         }
         else
