@@ -82,6 +82,8 @@ public abstract class PlayerBase : MonoBehaviour
     private int PlayerIndex = 0;
     //プレイヤーの体力。
     Image HpImag;
+    //PlayerのAnimator。
+    Animator PlayerAnim;
 
     bool beforeY = false;
 
@@ -116,8 +118,11 @@ public abstract class PlayerBase : MonoBehaviour
        
         //キャラクターコントローラーのコンポーネントを取得。
         Characon = this.GetComponent<CharacterController>();
+        //オーディオ取得。
         Audio = gameObject.GetComponent<AudioSource>();
-        
+        //Animatorを取得。
+        PlayerAnim = gameObject.GetComponent<Animator>();
+
         //プレイヤーに設定された最大HPを現在のHPに設定。
         playerInfo.HP = playerInfo.MaxHP;
         playerInfo.State = PLAYERSTATE.WAIT;
@@ -164,23 +169,18 @@ public abstract class PlayerBase : MonoBehaviour
                 Img.transform.localPosition = new Vector3(35.0f, -147.5f, 0.0f);
                 break;
         }
+
+        
     }
 
     public void Update()
     {    
         TargetPos = transform.position;
-        Move();
-        var KeyState = GamePad.GetState((GamePad.Index)PlayerIndex + 1, false);
+
         //待機状態なら。
         if (playerInfo.State == PLAYERSTATE.WAIT)
         {
-            //var playerNo = GamePad.Index.One;
             
-            //マウスの右クリックが押されている間。
-            //if (Input.GetMouseButton(1))
-            //{
-            //    Attack();
-            //}
         }
         //何かしらを行っている状態。
         else
@@ -193,6 +193,9 @@ public abstract class PlayerBase : MonoBehaviour
             }
         }
 
+        Move();
+
+        var KeyState = GamePad.GetState((GamePad.Index)PlayerIndex + 1, false);
         if (KeyState.RightShoulder)
         {
             Attack();
@@ -202,6 +205,8 @@ public abstract class PlayerBase : MonoBehaviour
         {
             Reload();
         }
+
+       
 
         //落下死したら自陣地に復活。
         if (TargetPos.y < -10)
@@ -219,6 +224,26 @@ public abstract class PlayerBase : MonoBehaviour
         WeaponChange();
 
         HpImag.fillAmount = playerInfo.HP / playerInfo.MaxHP;
+
+
+        //プレイヤーの状態を見てアニメーションの切り替え。
+        switch (playerInfo.State)
+        {
+            case PLAYERSTATE.MOVE:
+                if (PlayerAnim == null)
+                {
+                    break;
+                }
+                PlayerAnim.SetTrigger("isMove");
+                break;
+            case PLAYERSTATE.ATTACK:
+                if (PlayerAnim == null)
+                {
+                    break;
+                }
+                PlayerAnim.SetTrigger("isAttack");
+                break;
+        }
 
     }
 
@@ -298,12 +323,6 @@ public abstract class PlayerBase : MonoBehaviour
 
         if (!Jamp)
         {
-            //スペースキーでジャンプ。
-            //if (Input.GetKey(KeyCode.Space))
-            //{
-            //    Jamp = true;
-            //}
-
             //XboxコントローラーのAボタン。
             if (KeyState.A)
             {
