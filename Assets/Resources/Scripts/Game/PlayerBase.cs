@@ -82,8 +82,8 @@ public abstract class PlayerBase : MonoBehaviour
     private int PlayerIndex = 0;
     //プレイヤーの体力。
     Image HpImag;
-    //Anim
-    Animation PlayerAnim;
+    //PlayerのAnimator。
+    Animator PlayerAnim;
 
     bool beforeY = false;
 
@@ -118,8 +118,11 @@ public abstract class PlayerBase : MonoBehaviour
        
         //キャラクターコントローラーのコンポーネントを取得。
         Characon = this.GetComponent<CharacterController>();
+        //オーディオ取得。
         Audio = gameObject.GetComponent<AudioSource>();
-        
+        //Animatorを取得。
+        PlayerAnim = gameObject.GetComponent<Animator>();
+
         //プレイヤーに設定された最大HPを現在のHPに設定。
         playerInfo.HP = playerInfo.MaxHP;
         playerInfo.State = PLAYERSTATE.WAIT;
@@ -166,6 +169,8 @@ public abstract class PlayerBase : MonoBehaviour
                 Img.transform.localPosition = new Vector3(35.0f, -147.5f, 0.0f);
                 break;
         }
+
+        
     }
 
     public void Update()
@@ -219,6 +224,26 @@ public abstract class PlayerBase : MonoBehaviour
         WeaponChange();
 
         HpImag.fillAmount = playerInfo.HP / playerInfo.MaxHP;
+
+
+        //プレイヤーの状態を見てアニメーションの切り替え。
+        switch (playerInfo.State)
+        {
+            case PLAYERSTATE.MOVE:
+                if (PlayerAnim == null)
+                {
+                    break;
+                }
+                PlayerAnim.SetTrigger("isMove");
+                break;
+            case PLAYERSTATE.ATTACK:
+                if (PlayerAnim == null)
+                {
+                    break;
+                }
+                PlayerAnim.SetTrigger("isAttack");
+                break;
+        }
 
     }
 
